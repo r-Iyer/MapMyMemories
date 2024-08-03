@@ -19,13 +19,18 @@ const MapComponent = () => {
                 return response.text();
             })
             .then(csvText => {
+                console.log('CSV content:', csvText); // Debug CSV content
                 Papa.parse(csvText, {
                     header: true,
                     skipEmptyLines: true,
                     delimiter: ",",
                     complete: (results) => {
+                        console.log('Parsed results:', results); // Debug parsing results
                         setPlaces(results.data);
                     },
+                    error: (error) => {
+                        console.error('Error parsing CSV:', error);
+                    }
                 });
             })
             .catch(error => console.error('Error loading CSV file:', error));
@@ -51,8 +56,15 @@ const MapComponent = () => {
                     icon={customIcon}
                 >
                     <Popup>
-                        <b>{place.town}</b><br />
-                        {place.state}
+                        <div>
+                            <b>{place.town}</b><br />
+                            {place.state}<br />
+                            <img 
+                                src={place.picture} 
+                                alt={place.town} 
+                                style={{ width: '100px', height: 'auto', marginTop: '5px' }}
+                            />
+                        </div>
                     </Popup>
                 </Marker>
             ))}
