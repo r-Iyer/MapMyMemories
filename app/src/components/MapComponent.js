@@ -4,22 +4,39 @@ import React, { useEffect, useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import Papa from 'papaparse';
 import '.././styles.css'; // Import your custom styles
 
 const MapComponent = () => {
     const [places, setPlaces] = useState([]);
 
     useEffect(() => {
-        // Fetch data from API
-        fetch('/places')
-            .then(response => response.json())
-            .then(data => {
-                setPlaces(data);
+        fetch('/places.csv')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.text();
             })
-            .catch(error => console.error('Error loading data:', error));
+            .then(csvText => {
+                console.log('CSV content:', csvText); // Debug raw CSV content
+                Papa.parse(csvText, {
+                    header: true,
+                    skipEmptyLines: true,
+                    delimiter: ",",
+                    complete: (results) => {
+                        console.log('Parsed results:', results); // Debug parsing results
+                        console.log('Parsed data:', results.data); // Debug parsed data
+                        setPlaces(results.data);
+                    },
+                    error: (error) => {
+                        console.error('Error parsing CSV:', error);
+                    }
+                });
+            })
+            .catch(error => console.error('Error loading CSV file:', error));
     }, []);
 
-    // Custom Icon Example
     const customIcon = new L.Icon({
         iconUrl: '/icons/marker.png', // Update with your icon path
         iconSize: [22, 22],
