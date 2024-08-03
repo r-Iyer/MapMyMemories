@@ -19,19 +19,13 @@ const MapComponent = () => {
                 return response.text();
             })
             .then(csvText => {
-                console.log('CSV content:', csvText); // Debug raw CSV content
                 Papa.parse(csvText, {
                     header: true,
                     skipEmptyLines: true,
                     delimiter: ",",
                     complete: (results) => {
-                        console.log('Parsed results:', results); // Debug parsing results
-                        console.log('Parsed data:', results.data); // Debug parsed data
                         setPlaces(results.data);
                     },
-                    error: (error) => {
-                        console.error('Error parsing CSV:', error);
-                    }
                 });
             })
             .catch(error => console.error('Error loading CSV file:', error));
