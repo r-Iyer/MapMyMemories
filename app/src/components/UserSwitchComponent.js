@@ -9,17 +9,18 @@ const UserSwitchComponent = ({ currentUsername, onSwitchUser }) => {
     const handleUserChange = () => {
         setError(''); // Reset error message
 
-        if (!newUsername.trim()) {
+        const trimmedUsername = newUsername.trim();
+        if (!trimmedUsername) {
             setError('Username cannot be empty.');
             return;
         }
 
-        fetch(`/${newUsername.trim()}/places.csv`)
+        fetch(`/${trimmedUsername}/places.csv`)
             .then(response => {
                 if (!response.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`);
                 }
-                onSwitchUser(newUsername.trim());
+                onSwitchUser(trimmedUsername);
                 setNewUsername('');
                 setIsOpen(false);
             })
