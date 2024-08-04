@@ -34,8 +34,8 @@ const MapComponent = () => {
 
     const customIcon = new L.Icon({
         iconUrl: '/icons/marker.png', // Update with your icon path
-        iconSize: [24, 24], // Increase icon size
-        iconAnchor: [15, 25],
+        iconSize: [18, 18], // Increase icon size
+        iconAnchor: [14, 18],
         popupAnchor: [0, -32],
         className: 'custom-marker-icon' // Apply custom class if needed
     });
