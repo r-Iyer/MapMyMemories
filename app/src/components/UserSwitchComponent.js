@@ -7,28 +7,23 @@ const UserSwitchComponent = ({ currentUsername, onSwitchUser }) => {
     const [error, setError] = useState('');
 
     const handleUserChange = () => {
-        // Reset error message
-        setError('');
+        setError(''); // Reset error message
 
-        // Validate username (basic check for non-empty input)
         if (!newUsername.trim()) {
             setError('Username cannot be empty.');
             return;
         }
 
-        // Check if username exists
         fetch(`/${newUsername.trim()}/places.csv`)
             .then(response => {
                 if (!response.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`);
                 }
-                // If the file exists, switch the user
                 onSwitchUser(newUsername.trim());
                 setNewUsername('');
                 setIsOpen(false);
             })
-            .catch(error => {
-                console.error('Error loading CSV file for username:', error);
+            .catch(() => {
                 setError('User not found or error loading data.');
             });
     };
@@ -37,7 +32,7 @@ const UserSwitchComponent = ({ currentUsername, onSwitchUser }) => {
         <div className="user-switch-container">
             <button 
                 className="user-switch-button" 
-                onClick={() => setIsOpen(!isOpen)}
+                onClick={() => setIsOpen(prev => !prev)}
             >
                 Switch User
             </button>

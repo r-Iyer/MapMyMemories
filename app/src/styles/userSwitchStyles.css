@@ -5,21 +5,25 @@
     background: rgba(0, 0, 0, 0.7); /* Dark transparent background */
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5); /* Darker shadow for depth */
-    padding: 15px; /* Adjust padding for better spacing */
+    padding: 10px; /* Adjust padding for better spacing */
     font-family: 'Arial', sans-serif; /* Modern font */
     z-index: 1000; /* Ensure it is on top */
     color: #fff; /* White text color */
+    max-width: 200px; /* Limit the width */
+    transition: max-height 0.3s ease; /* Smooth transition */
+    overflow: hidden; /* Hide overflow */
 }
 
 .user-switch-button {
     background-color: #333; /* Dark background */
     color: #fff;
     border: none;
-    padding: 10px 15px;
+    padding: 8px 12px;
     border-radius: 5px;
     cursor: pointer;
-    font-size: 16px;
+    font-size: 14px;
     font-weight: bold; /* Bold text */
+    display: block; /* Block for better control */
 }
 
 .user-switch-button:hover {
@@ -30,14 +34,16 @@
     margin-top: 10px;
     display: flex;
     flex-direction: column;
+    max-height: 200px; /* Max height when expanded */
+    overflow-y: auto; /* Scroll if needed */
 }
 
 .user-switch-dropdown input {
-    padding: 10px;
+    padding: 8px;
     border: none;
     border-radius: 4px;
     margin-bottom: 5px;
-    font-size: 16px;
+    font-size: 14px;
     font-family: 'Arial', sans-serif; /* Consistent font */
     color: #333; /* Dark text color for input */
 }
@@ -46,10 +52,10 @@
     background-color: #444; /* Dark button background */
     color: #fff;
     border: none;
-    padding: 10px 15px;
+    padding: 8px 12px;
     border-radius: 4px;
     cursor: pointer;
-    font-size: 16px;
+    font-size: 14px;
     font-weight: bold; /* Bold text */
 }
 
@@ -61,4 +67,11 @@
     margin-top: 10px;
     font-size: 14px;
     color: #ccc; /* Lighter gray text color */
+}
+
+.error-message {
+    color: #e74c3c; /* Red color for errors */
+    margin-top: 10px;
+    font-size: 14px;
+    font-weight: bold; /* Bold text for emphasis */
 }
