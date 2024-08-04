@@ -1,11 +1,9 @@
-// src/components/MapComponent.js
-
 import React, { useEffect, useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import Papa from 'papaparse';
-import '.././styles.css'; // Import your custom styles
+import '../styles/mapStyles.css'; // Import your map styles
 
 const MapComponent = () => {
     const [places, setPlaces] = useState([]);
@@ -19,13 +17,11 @@ const MapComponent = () => {
                 return response.text();
             })
             .then(csvText => {
-                console.log('CSV content:', csvText); // Debug CSV content
                 Papa.parse(csvText, {
                     header: true,
                     skipEmptyLines: true,
                     delimiter: ",",
                     complete: (results) => {
-                        console.log('Parsed results:', results); // Debug parsing results
                         setPlaces(results.data);
                     },
                     error: (error) => {
@@ -38,13 +34,14 @@ const MapComponent = () => {
 
     const customIcon = new L.Icon({
         iconUrl: '/icons/marker.png', // Update with your icon path
-        iconSize: [22, 22],
-        iconAnchor: [16, 32],
-        popupAnchor: [0, -32]
+        iconSize: [24, 24], // Increase icon size
+        iconAnchor: [15, 25],
+        popupAnchor: [0, -32],
+        className: 'custom-marker-icon' // Apply custom class if needed
     });
 
     return (
-        <MapContainer center={[22.57339112, 88.350074]} zoom={4} style={{ height: '100vh', width: '100%' }}>
+        <MapContainer center={[22.57339112, 88.350074]} zoom={4} className="map-container">
             <TileLayer
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -56,14 +53,20 @@ const MapComponent = () => {
                     icon={customIcon}
                 >
                     <Popup>
-                        <div>
-                            <b>{place.town}</b><br />
-                            {place.state}<br />
-                            <img 
-                                src={place.picture} 
-                                alt={place.town} 
-                                style={{ width: '100px', height: 'auto', marginTop: '5px' }}
-                            />
+                        <div className="popup-content">
+                            <div className="popup-title">
+                                Place: {place.place}
+                            </div>
+                            <div className="popup-body">
+                                State: {place.state}
+                            </div>
+                            {place.picture && (
+                                <img 
+                                    src={place.picture} 
+                                    alt={place.place} 
+                                    className="popup-image"
+                                />
+                            )}
                         </div>
                     </Popup>
                 </Marker>

@@ -1,0 +1,51 @@
+/* Import the font */
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&display=swap');
+
+/* Map container styles */
+.map-container {
+    height: 100vh; /* Full height of viewport */
+    width: 100%; /* Full width */
+}
+
+/* Popup styles */
+.leaflet-popup-content-wrapper {
+    background: #333 !important; /* Dark background */
+    color: #fff !important; /* White text color */
+    border-radius: 12px; /* Rounded corners */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3); /* Shadow effect */
+    border: 5px solid #d4a373; /* Goldish border for vintage look */
+    padding: 15px; /* Padding inside the popup */
+}
+
+.leaflet-popup-content {
+    color: #fff !important; /* White text color */
+    font-family: 'Dancing Script', cursive; /* Fancy font */
+}
+
+.popup-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.popup-title {
+    font-size: 22px; /* Font size for header */
+    font-weight: 700; /* Bold font */
+    margin-bottom: 5px; /* Spacing below header */
+    border-bottom: 2px solid #555; /* Bottom border */
+    padding-bottom: 5px; /* Padding below header text */
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* Shadow for text */
+}
+
+.popup-body {
+    font-size: 18px; /* Font size for body text */
+    margin-top: 5px; /* Spacing above body text */
+}
+
+/* Popup image styles */
+.popup-image {
+    width: 200px; /* Increase image width */
+    height: auto; /* Maintain aspect ratio */
+    margin-top: 10px; /* Adjust spacing above image */
+    border-radius: 8px; /* Rounded corners for image */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Shadow effect on image */
+}
