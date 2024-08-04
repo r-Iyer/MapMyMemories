@@ -1,0 +1,101 @@
+﻿place,state,country,latitude,longitude,picture
+Kolkata,West Bengal,India,22.57339112,88.35007427,\images\Kolkata.jpg
+Shibpur,West Bengal,India,22.55606021,88.3044081,\images\Shibpur.jpg
+Dankuni,West Bengal,India,22.67777891,88.29280645,\images\Dankuni.jpg
+Durgapur,West Bengal,India,23.52447155437555, 87.3066909803812,\images\Durgapur.jpeg
+New Jalpaiguri,West Bengal,India,26.68454132,88.44266172,\images\Jalpaiguri.jpg
+Sittong,West Bengal,India,26.87170573,88.36123294,\images\Sittong.jpg
+Kurseong,West Bengal,India,26.88295112,88.27729075,\images\Kurseong.jpg
+Mangpoo,West Bengal,India,26.97314067,88.36998926,\images\Mangpoo.jpg
+Darjeeling,West Bengal,India,27.04203912,88.26260909,\images\Darjeeling.jpg
+Mandarmani,West Bengal,India,21.67427598,87.70222042, \images\Mandarmani.jpg
+Mirik,West Bengal,India,26.88781546,88.18326428, \images\Mirik.jpg
+Lepchajagat,West Bengal,India,27.01290434,88.19876538, \images\Lepchajagat.jpg
+Pashupati Phatak, Pashupatinagar, Nepal,26.94922118,88.12209681,\images\Pashupati.jpg
+Ravangla, Sikkim,India,27.30682625,88.36384169, \images\Ravangla.jpg
+Pelling, Sikkim,India,27.32029629,88.23884007, \images\Pelling.jpg
+Bengaluru,Karnataka,India,12.98457014,77.59375383,\images\Bangalore.jpg
+Mysore,Karnataka,India,12.30917863,76.65499764, \images\Mysore.jpg
+Chennai, Tamil Nadu,India,13.023799,80.18199, \images\Chennai.jpg
+Kancheepuram, Tamil Nadu,India,12.85452257,79.71153137, \images\Kancheepuram.jpg
+Thirumangalam, Tamil Nadu,India,11.98319467,79.64560467, \images\Thirumangalam.jpeg
+Vellore, Tamil Nadu,India,12.91799735,79.12861552, \images\Vellore.jpg
+Pondicherry, Pondicherry,India,11.94149869,79.80545831, \images\Pondicherry.jpeg
+Goa, Goa,India,15.282831006304345, 73.917512308275, \images\Goa.JPG
+Mumbai, Maharashtra,India,18.92213632,72.83464356, \images\Mumbai.jpg
+Thane, Maharashtra,India,19.229801931956885, 72.97202666901109, \images\Thane.jpeg
+Tirupathi,Andhra Pradesh,India,13.6969887,79.34476596, \images\Tirupathi.jpg
+Kochi, Kerala,India,9.935053587,76.27610657, \images\Kochi.JPG
+Kaziranga,Assam,India,26.60592153,93.40070428, \images\Kaziranga.jpg
+Umiam Lake,Meghalaya,India,25.65227259,91.89434613, \images\Umiam.jpg
+Shillong,Meghalaya,India,25.57789633,91.88968447, \images\Shillong.jpg
+Dawki,Meghalaya,India,25.18414068,92.02431672, \images\Dawki.jpg
+Mawlynnong,Meghalaya,India,25.20169438,91.91631591, \images\Mawlynnong.jpg
+Laitmawsiang,Meghalaya,India,25.31635901,91.76231863, \images\Laitmawsiang.jpg
+Arwah,Meghalaya,India,25.29987558,91.728598, \images\Arwah.jpg
+Mawsmai,Meghalaya,India,25.24474535,91.72429154, \images\Mawsmai.jpg
+Mawphlang,Meghalaya,India,25.44541965,91.74987312, \images\Mawphlang.jpg
+Cherrapunji,Meghalaya,India,25.2722257,91.73288883, \images\Cherrapunji.jpg
+Nartiyang,Meghalaya,India,25.57420549,92.21619267, \images\Nartiyang.jpg
+Krangshuri,Meghalaya,India,25.28798429,92.12562896, \images\Krangshuri.jpg
+Agra, Uttar Pradesh, India,27.187683626147034, 78.04453352674277, \images\Agra.JPG
+Mathura, Uttar Pradesh, India,27.515159191867177, 77.67281895179715, \images\Mathura.JPG
+Noida, Uttar Pradesh, India,28.542009671173027, 77.387382103421, \images\Noida.jpg
+Kalka, Haryana, India,30.843201196747994, 76.9289366321408, \images\Kalka.JPG
+Shimla, Himachal Pradesh, India,31.104653427460292, 77.16176204671943, \images\Shimla.JPG
+Rampur, Himachal Pradesh, India,31.449389362394264, 77.63155741365755, \images\Rampur.JPG
+Sangla, Himachal Pradesh, India,31.430211276940817, 78.26162890970514, \images\Sangla.JPG
+Chitkul, Himachal Pradesh, India,31.351914363004536, 78.43606347904445, \images\Chitkul.JPG
+Kalpa, Himachal Pradesh, India, 31.537986346375074, 78.25228924869985, \images\Kalpa.JPG
+Hatu Peak, Himachal Pradesh, India, 31.245659852846277, 77.50495221720247, \images\Hatu.JPG
+Manali, Himachal Pradesh, India, 32.244547071373496, 77.19140990688973, \images\Manali.jpg
+Kufri, Himachal Pradesh, India, 31.099621572120647, 77.26700619320509, \images\Kufri.jpeg
+Chandigarh, Chandigarh, India, 30.750747342916974, 76.8088899598553, \images\Chandigarh.jpeg
+Udhampur, Jammu and Kashmir, India, 32.91554988022802, 75.13941977867204, \images\Udhampur.jpg
+Patnitop, Jammu and Kashmir, India, 33.08728856898474, 75.33539628866852, \images\Patnitop.jpg
+Sanasar Lake, Jammu and Kashmir, India, 33.12463812582917, 75.25978623494144, \images\Sanasar.jpg
+Verinag, Jammu and Kashmir, India, 33.539385543741176, 75.24780745756365, \images\Verinag.jpg
+Chandanwari, Jammu and Kashmir, India, 34.01489204201307, 75.31758582508947, \images\Chandanwari.jpg
+Betab Valley, Jammu and Kashmir, India, 34.0548538616673, 75.364205651668, \images\Betab.jpg
+Aru Valley, Jammu and Kashmir, India, 34.09229137198027, 75.26357607495062, \images\Aru.jpg
+Pahalgam, Jammu and Kashmir, India, 34.017797267243424, 75.31545143991062, \images\Pahalgam.jpg
+Awantipora, Jammu and Kashmir, India, 33.92220189297126, 75.01554556914263, \images\Awantipora.jpg
+Gulmarg, Jammu and Kashmir, India, 34.04880515692834, 74.37937302314855, \images\Gulmarg.jpg
+Afarwat, Jammu and Kashmir, India, 34.041094474294944, 74.33426297096325, \images\Afarwat.jpg
+Srinagar, Jammu and Kashmir, India, 34.14703064532195, 74.86726349706007, \images\Srinagar.jpg
+Sonmarg, Jammu and Kashmir, India, 34.303402584619356, 75.2931806345423, \images\Sonmarg.jpg
+Yusmarg, Jammu and Kashmir, India, 33.83240686435864, 74.6506803386902	, \images\Yusmarg.jpg
+Doodhpathri, Jammu and Kashmir, India, 33.850910593613634, 74.56334900191919, \images\Doodhpathri.jpg
+Charar-i-Sharief, Jammu and Kashmir, India, 33.86460858568338, 74.76689856451053, \images\Sharief.jpg
+Nainital, Uttarakhand, India, 29.391717377983607, 79.45458263344291, \images\Nainital.JPG
+Kathgodam, Uttarakhand, India, 29.267053795549074, 79.546620107727483, \images\Kathgodam.JPG
+Chaukori, Uttarakhand, India, 29.837451647051868, 80.03241773871214, \images\Chaukori.JPG
+Munsiyari, Uttarakhand, India, 30.063992834968268, 80.23681513156589, \images\Munsiyari.JPG
+Kausani, Uttarakhand, India, 29.844677535917278, 79.60353780160082, \images\Kausani.JPG
+Bageshwar, Uttarakhand, India, 29.905972527387284, 79.64222092896732, \images\Bageshwar.JPG
+Ghorakal, Uttarakhand, India, 29.379966792361152, 79.56700656466188, \images\Ghorakal.JPG
+Birthi, Uttarakhand, India, 30.040131034185872, 80.16157951024013, \images\Birthi.JPG
+Kalamuni Top, Uttarakhand, India, 30.03745678200591, 80.19968262073483, \images\Kalamuni.JPG
+Ranikhet, Uttarakhand, India, 29.665297614555747, 79.4709201537819, \images\Ranikhet.JPG
+Tehri, Uttarakhand, India, 30.406232262847478, 78.47827041228823, \images\Tehri.JPG
+Mussoorie, Uttarakhand, India, 30.463595058696814, 78.06819889882429, \images\Mussoorie.jpg
+Rudraprayag, Uttarakhand, India, 30.285464963688604, 78.98263330227793, \images\Rudraprayag.jpg
+Chopta, Uttarakhand, India, 30.35416915370442, 78.41913802393884, \images\Chopta.jpg
+Dagar, Uttarakhand, India, 30.279435260472955, 78.59986207551331, \images\Dagar.jpg
+Ukhimath, Uttarakhand, India, 30.514661863402374, 79.09574740963016, \images\Ukhimath.jpg
+Auli, Uttarakhand, India, 30.53192070867007, 79.57060420374627, \images\Auli.jpg
+Vishnuprayag, Uttarakhand, India, 30.56315910180783, 79.57732773839788, \images\Vishnuprayag.jpg
+Badrinath, Uttarakhand, India, 30.74276164835281, 79.4917359667167, \images\Badrinath.jpg
+Mana, Uttarakhand, India, 30.772357537452677, 79.49515515007283, \images\Mana.jpg
+Nandprayag, Uttarakhand, India, 30.32928645633064, 79.3204468772176, \images\Nandprayag.jpg
+Khirsu, Uttarakhand, India, 30.172616793874813, 78.86767342271071, \images\Khirsu.jpg
+Devprayag, Uttarakhand, India, 30.146249609038982, 78.60009673907935, \images\Devprayag.jpg
+Rishikesh, Uttarakhand, India, 30.08853669728483, 78.28352027107373, \images\Rishikesh.jpg
+Haridwar, Uttarakhand, India, 29.9419147888612, 78.16398508115921, \images\Haridwar.jpg
+Gangotri, Uttarakhand, India, 30.994946266118227, 78.94130579368381, \images\Gangotri.jpg
+Harsil, Uttarakhand, India, 31.04010161213563, 78.73771532494145, \images\Harsil.jpg
+Kedarnath, Uttarakhand, India, 30.735108486563917, 79.06672055059249, \images\Haridwar.jpg
+Jakholi, Uttarakhand, India, 30.394596805681925, 78.89703858809023, \images\Jakholi.jpg
+Uttarkashi, Uttarakhand, India, 30.73055891018505, 78.42772571932642, \images\Uttarkashi.jpg
+Landour, Uttarakhand, India, 30.455612718813313, 78.10178878969832, \images\Landour.jpg
+New Delhi, New Delhi, India, 28.635813907041612, 77.24002099523051,\images\Delhi.jpg

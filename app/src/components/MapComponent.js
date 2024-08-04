@@ -2,14 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import '../styles/mapStyles.css';
 import Papa from 'papaparse';
-import '../styles/mapStyles.css'; // Import your map styles
 
-const MapComponent = () => {
+const MapComponent = ({ username }) => {
     const [places, setPlaces] = useState([]);
 
     useEffect(() => {
-        fetch('/places.csv')
+        fetch(`/${username}/places.csv`)
             .then(response => {
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
@@ -30,7 +30,7 @@ const MapComponent = () => {
                 });
             })
             .catch(error => console.error('Error loading CSV file:', error));
-    }, []);
+    }, [username]);
 
     const customIcon = new L.Icon({
         iconUrl: '/icons/marker.png', // Update with your icon path
@@ -65,7 +65,7 @@ const MapComponent = () => {
                             </div>
                             {place.picture && (
                                 <img 
-                                    src={place.picture} 
+                                    src={`/${username}/${place.picture.trim()}`} 
                                     alt={place.place} 
                                     className="popup-image"
                                 />

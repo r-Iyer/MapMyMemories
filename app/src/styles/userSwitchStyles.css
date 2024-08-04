@@ -1,0 +1,64 @@
+.user-switch-container {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(0, 0, 0, 0.7); /* Dark transparent background */
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5); /* Darker shadow for depth */
+    padding: 15px; /* Adjust padding for better spacing */
+    font-family: 'Arial', sans-serif; /* Modern font */
+    z-index: 1000; /* Ensure it is on top */
+    color: #fff; /* White text color */
+}
+
+.user-switch-button {
+    background-color: #333; /* Dark background */
+    color: #fff;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold; /* Bold text */
+}
+
+.user-switch-button:hover {
+    background-color: #555; /* Lighter dark on hover */
+}
+
+.user-switch-dropdown {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+}
+
+.user-switch-dropdown input {
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    margin-bottom: 5px;
+    font-size: 16px;
+    font-family: 'Arial', sans-serif; /* Consistent font */
+    color: #333; /* Dark text color for input */
+}
+
+.user-switch-dropdown button {
+    background-color: #444; /* Dark button background */
+    color: #fff;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold; /* Bold text */
+}
+
+.user-switch-dropdown button:hover {
+    background-color: #666; /* Lighter dark on hover */
+}
+
+.current-username {
+    margin-top: 10px;
+    font-size: 14px;
+    color: #ccc; /* Lighter gray text color */
+}
