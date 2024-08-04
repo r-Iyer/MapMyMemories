@@ -1,15 +1,39 @@
-﻿place,state,latitude,longitude,picture
-Kolkata,West Bengal,22.57339112,88.35007427,images/Kolkata.jpg
-Shibpur,West Bengal,22.55606021280963, 88.30440809602383,images/Shibpur.jpg
-Dankuni,West Bengal,22.677778914234143, 88.2928064506128,images/Dankuni.jpg
-Mandarmani,West Bengal, 21.674275976009, 87.70222041675132, /images/Mandarmani.jpg
-Bengaluru,Karnataka,12.98457014,77.59375383,/images/Bangalore.jpg
-Mysore,Karnataka, 12.309178634725885, 76.65499764015769, /images/Mysore.jpg
-Chennai, Tamil Nadu, 13.023799, 80.181990, /images/Chennai.jpg
-Kancheepuram, Tamil Nadu, 12.85452257117417, 79.71153136791538, /images/Kancheepuram.jpg
-Thirumangalam, Tamil Nadu, 11.983194669299097, 79.64560467396115, /images/Thirumangalam.jpeg
-Vellore, Tamil Nadu, 12.917997346803324, 79.12861552417836, /images/Vellore.jpeg
-Pondicherry, Pondicherry, 11.941498694482297, 79.80545831164986, /images/Pondicherry.jpeg
-Mumbai, Maharashtra, 18.92213631808677, 72.83464356491416, /images/Mumbai.jpg
-Tirupathi,Andhra Pradesh, 13.696988699028909, 79.34476595935875, /images/Tirupathi.jpg
-Kochi, Kerala, 9.93505358738555, 76.27610657283361, /images/Kochi.JPG
+﻿place,state,country,latitude,longitude,picture
+Kolkata,West Bengal,India,22.57339112,88.35007427,images/Kolkata.jpg
+Shibpur,West Bengal,India,22.55606021,88.3044081,images/Shibpur.jpg
+Dankuni,West Bengal,India,22.67777891,88.29280645,images/Dankuni.jpg
+New Jalpaiguri,West Bengal,India,26.68454132,88.44266172,images/Jalpaiguri.jpg
+Sittong,West Bengal,India,26.87170573,88.36123294,images/Sittong.jpg
+Kurseong,West Bengal,India,26.88295112,88.27729075,images/Kurseong.jpg
+Mangpoo,West Bengal,India,26.97314067,88.36998926,images/Mangpoo.jpg
+Darjeeling,West Bengal,India,27.04203912,88.26260909,images/Darjeeling.jpg
+Mandarmani,West Bengal,India,21.67427598,87.70222042, /images/Mandarmani.jpg
+Mirik,West Bengal,India,26.88781546,88.18326428, /images/Mirik.jpg
+Lepchajagat,West Bengal,India,27.01290434,88.19876538, /images/Lepchajagat.jpg
+Pashupati Phatak, Pashupatinagar, Nepal,26.94922118,88.12209681,/images/Pashupati.jpg
+Ravangla, Sikkim,India,27.30682625,88.36384169, /images/Ravangla.jpg
+Pelling, Sikkim,India,27.32029629,88.23884007, /images/Pelling.jpg
+Bengaluru,Karnataka,India,12.98457014,77.59375383,/images/Bangalore.jpg
+Mysore,Karnataka,India,12.30917863,76.65499764, /images/Mysore.jpg
+Chennai, Tamil Nadu,India,13.023799,80.18199, /images/Chennai.jpg
+Kancheepuram, Tamil Nadu,India,12.85452257,79.71153137, /images/Kancheepuram.jpg
+Thirumangalam, Tamil Nadu,India,11.98319467,79.64560467, /images/Thirumangalam.jpeg
+Vellore, Tamil Nadu,India,12.91799735,79.12861552, /images/Vellore.jpeg
+Pondicherry, Pondicherry,India,11.94149869,79.80545831, /images/Pondicherry.jpeg
+Goa, Goa,India,15.282831006304345, 73.917512308275, /images/Goa.JPG
+Mumbai, Maharashtra,India,18.92213632,72.83464356, /images/Mumbai.jpg
+Tirupathi,Andhra Pradesh,India,13.6969887,79.34476596, /images/Tirupathi.jpg
+Kochi, Kerala,India,9.935053587,76.27610657, /images/Kochi.JPG
+Kaziranga,Assam,India,26.60592153,93.40070428, /images/Kaziranga.jpg
+Umiam Lake,Meghalaya,India,25.65227259,91.89434613, /images/Umiam.jpg
+Shillong,Meghalaya,India,25.57789633,91.88968447, /images/Shillong.jpg
+Dawki,Meghalaya,India,25.18414068,92.02431672, /images/Dawki.jpg
+Mawlynnong,Meghalaya,India,25.20169438,91.91631591, /images/Mawlynnong.jpg
+Laitmawsiang,Meghalaya,India,25.31635901,91.76231863, /images/Laitmawsiang.jpg
+Arwah,Meghalaya,India,25.29987558,91.728598, /images/Arwah.jpg
+Laitmawsiang,Meghalaya,India,25.31635901,91.76231863, /images/Laitmawsiang.jpg
+Mawsmai,Meghalaya,India,25.24474535,91.72429154, /images/Mawsmai.jpg
+Mawphlang,Meghalaya,India,25.44541965,91.74987312, /images/Mawphlang.jpg
+Cherrapunji,Meghalaya,India,25.2722257,91.73288883, /images/Cherrapunji.jpg
+Nartiyang,Meghalaya,India,25.57420549,92.21619267, /images/Nartiyang.jpg
+Krangshuri,Meghalaya,India,25.28798429,92.12562896, /images/Krangshuri.jpg

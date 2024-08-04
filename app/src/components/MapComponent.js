@@ -60,6 +60,9 @@ const MapComponent = () => {
                             <div className="popup-body">
                                 State: {place.state}
                             </div>
+                            <div className="popup-body">
+                                Country: {place.country}
+                            </div>
                             {place.picture && (
                                 <img 
                                     src={place.picture} 
