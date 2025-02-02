@@ -1,2 +1,2 @@
 # Visited-Places
-Places I have visited
+Places I have travelled.
