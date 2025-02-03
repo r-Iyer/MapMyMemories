@@ -13,16 +13,15 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 const PORT = process.env.PORT || 5000;
-const upload = multer({ storage: multer.memoryStorage() }); // ✅ No temp folder needed
+const upload = multer({ storage: multer.memoryStorage() });
 
 const GITHUB_REPO = process.env.GITHUB_REPO || "r-Iyer/Visited-Places";
 const GITHUB_BRANCH = process.env.GITHUB_BRANCH || "main";
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 
-// ✅ Get Absolute Path to `app/public/`
-const BASE_DIR = path.join(__dirname, '..', 'app', 'public');
+// ✅ Correct Absolute Path for `app/public/`
+const BASE_DIR = path.resolve(__dirname, 'public');
 
-/** ✅ Function to Upload Files to GitHub */
 async function uploadToGitHub(filePath, content, commitMessage) {
     const GITHUB_API_URL = `https://api.github.com/repos/${GITHUB_REPO}/contents/${filePath}`;
 
@@ -31,7 +30,7 @@ async function uploadToGitHub(filePath, content, commitMessage) {
         const response = await axios.get(GITHUB_API_URL, {
             headers: { Authorization: `Bearer ${GITHUB_TOKEN}` }
         });
-        sha = response.data.sha; // Get SHA for updating the file
+        sha = response.data.sha;
     } catch (err) {
         console.log(`ℹ️ File ${filePath} does not exist on GitHub, creating a new one.`);
     }
@@ -54,15 +53,13 @@ app.post('/api/upload', upload.single('image'), async (req, res) => {
         console.log("🔹 Received Request Body:", req.body);
 
         const { username, place, state, country, latlong } = req.body;
-        const file = req.file; // ✅ Directly get image as buffer
+        const file = req.file;
 
         if (!username || !file || !latlong.includes(',')) {
             return res.status(400).json({ error: 'Invalid request data' });
         }
 
         const [latitude, longitude] = latlong.split(',').map(coord => coord.trim());
-
-        console.log("✅ Parsed Latitude:", latitude, "✅ Parsed Longitude:", longitude);
 
         if (isNaN(latitude) || isNaN(longitude)) {
             return res.status(400).json({ error: 'Latitude or Longitude is not valid!' });
@@ -97,7 +94,7 @@ app.post('/api/upload', upload.single('image'), async (req, res) => {
         // ✅ Fetch existing CSV if available (GitHub or Local)
         try {
             if (fs.existsSync(localCsvPath)) {
-                const fileContent = fs.readFileSync(localCsvPath, 'utf8').trim();
+                const fileContent = fs.readFileSync(localCsvPath, 'utf8').trim(); // 🔥 Remove extra spaces
                 csvData = Papa.parse(fileContent, { header: true }).data;
             } else {
                 const response = await axios.get(`https://raw.githubusercontent.com/${GITHUB_REPO}/${GITHUB_BRANCH}/app/public/${username}/places.csv`);
@@ -118,9 +115,10 @@ app.post('/api/upload', upload.single('image'), async (req, res) => {
         };
         csvData.push(newRow);
 
-        // ✅ Convert CSV back to string & fix trailing newline issue
-        let csvString = Papa.unparse(csvData).replace(/\n+$/, ''); // ✅ Remove extra blank lines
-        fs.writeFileSync(localCsvPath, csvString); // ✅ Save locally without extra line
+        // ✅ Convert CSV back to string & fix extra new line issue
+        let csvString = Papa.unparse(csvData).trim(); // 🔥 Remove unnecessary spaces
+        csvString = csvString.replace(/\n+$/, ''); // 🔥 Remove extra blank lines at the end
+        fs.writeFileSync(localCsvPath, csvString); // ✅ Save locally
         console.log("✅ CSV updated locally:", localCsvPath);
 
         const csvBase64 = Buffer.from(csvString).toString('base64');
@@ -144,4 +142,4 @@ if (process.env.NODE_ENV !== 'production') {
     app.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`));
 }
 
-module.exports = app; // ✅ Required for Vercel deployment
+module.exports = app;
