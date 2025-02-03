@@ -12,7 +12,9 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-leaflet": "^4.2.1",
+    "react-pinch-zoom-pan": "^1.4.5",
     "react-scripts": "5.0.1",
+    "react-zoom-pan-pinch": "^3.7.0",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
