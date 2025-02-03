@@ -53,6 +53,11 @@ async function uploadToGitHub(filePath, content, commitMessage) {
   }
 }
 
+// Example endpoint
+app.get('/api/health', (req, res) => {
+  res.json({ message: 'Backend is healthy!' });
+});
+
 /**
  * API Endpoint for uploading data (no local storage).
  * A POST request to /api/upload (or /upload based on your Vercel routing) is handled here.
