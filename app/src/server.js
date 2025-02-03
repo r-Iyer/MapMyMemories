@@ -19,9 +19,10 @@ const GITHUB_REPO = process.env.GITHUB_REPO || "r-Iyer/Visited-Places";
 const GITHUB_BRANCH = process.env.GITHUB_BRANCH || "main";
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 
-// ✅ Correct Absolute Path for `app/public/`
+// ✅ Get Absolute Path to `app/public/`
 const BASE_DIR = path.resolve(__dirname, 'public');
 
+/** ✅ Function to Upload Files to GitHub */
 async function uploadToGitHub(filePath, content, commitMessage) {
     const GITHUB_API_URL = `https://api.github.com/repos/${GITHUB_REPO}/contents/${filePath}`;
 
