@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import '../styles/uploadForm.css'; // Make sure to import the CSS file
+import React, { useState, useEffect, useRef } from 'react';
+import '../styles/uploadForm.css'; // Ensure the CSS file is correctly imported
 
 const UploadForm = ({ onUploadSuccess }) => {
   const [formData, setFormData] = useState({
@@ -13,6 +13,44 @@ const UploadForm = ({ onUploadSuccess }) => {
   const [message, setMessage] = useState('');
   const [imageUrl, setImageUrl] = useState('');
 
+  // Reference for the Place input
+  const placeInputRef = useRef(null);
+  // Reference for the Autocomplete object
+  const autocompleteRef = useRef(null);
+
+  // Initialize the Google Places Autocomplete on mount
+  useEffect(() => {
+    if (window.google && placeInputRef.current) {
+      autocompleteRef.current = new window.google.maps.places.Autocomplete(placeInputRef.current, {
+        // You can adjust the options here; for full global suggestions, no restrictions:
+        // types: ['geocode'] // Uncomment if you want to restrict to addresses
+      });
+      autocompleteRef.current.addListener('place_changed', () => {
+        const place = autocompleteRef.current.getPlace();
+        if (place && place.address_components) {
+          // Extract the state and country from the address components
+          let state = '';
+          let country = '';
+          place.address_components.forEach(component => {
+            if (component.types.includes('administrative_area_level_1')) {
+              state = component.long_name;
+            }
+            if (component.types.includes('country')) {
+              country = component.long_name;
+            }
+          });
+          setFormData(prevData => ({
+            ...prevData,
+            // Update the place with the formatted name if available, otherwise the raw input
+            place: place.name || prevData.place,
+            state,
+            country,
+          }));
+        }
+      });
+    }
+  }, []);
+
   const handleChange = (e) => {
     const { name, value, files } = e.target;
     setFormData((prevData) => ({
@@ -25,7 +63,7 @@ const UploadForm = ({ onUploadSuccess }) => {
     e.preventDefault();
     const data = new FormData();
 
-    // Split latlong into latitude, longitude
+    // Split latlong into latitude and longitude
     const [latitude, longitude] = formData.latlong.split(',').map(coord => coord.trim());
     data.append("username", formData.username);
     data.append("place", formData.place);
@@ -49,13 +87,12 @@ const UploadForm = ({ onUploadSuccess }) => {
       });
 
       const result = await response.json();
-      console.log("🚀 Server Response:", result);
+      console.log("Server Response:", result);
 
       if (response.ok) {
         setMessage('New Destination Unlocked!');
         setImageUrl(result.githubImageUrl || result.localImagePath);
 
-        // After successful upload, call the callback passed from App
         if (onUploadSuccess) {
           setTimeout(() => {
             onUploadSuccess();
@@ -89,7 +126,8 @@ const UploadForm = ({ onUploadSuccess }) => {
         <input 
           type="text" 
           name="place" 
-          placeholder="Chennai"
+          placeholder="Enter any place on Earth"
+          ref={placeInputRef}
           value={formData.place} 
           onChange={handleChange} 
           required 
@@ -100,7 +138,7 @@ const UploadForm = ({ onUploadSuccess }) => {
         <input 
           type="text" 
           name="state" 
-          placeholder="Tamil Nadu"
+          placeholder="State will auto-update"
           value={formData.state} 
           onChange={handleChange} 
           className="upload-form-input"
@@ -110,7 +148,7 @@ const UploadForm = ({ onUploadSuccess }) => {
         <input 
           type="text" 
           name="country" 
-          placeholder="India"
+          placeholder="Country will auto-update"
           value={formData.country} 
           onChange={handleChange} 
           className="upload-form-input"

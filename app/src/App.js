@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import MapComponent from './components/MapComponent';
 import UserSwitchComponent from './components/UserSwitchComponent';
 import UploadForm from './components/UploadForm';
@@ -14,15 +14,33 @@ const App = () => {
     setCurrentUser(username);
   };
 
-  // This callback will be passed to UploadForm
-  // so that UploadForm can hide itself and show the map again
+  // This callback will be passed to UploadForm so that UploadForm can hide itself and show the map again
   const handleUploadSuccess = () => {
-    setShowForm(false); // Hide the form
+    setShowForm(false); // Hide the form after a successful upload
   };
+
+  // Dynamically inject the Google Maps API script into the document head
+  useEffect(() => {
+    const apiKey = process.env.REACT_APP_GOOGLE_API_KEY;
+    if (!apiKey) {
+      console.error("Google API key not found in environment variables.");
+      return;
+    }
+    const script = document.createElement('script');
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places`;
+    script.async = true;
+    script.defer = true;
+    document.head.appendChild(script);
+
+    // Cleanup: remove the script when the component unmounts
+    return () => {
+      document.head.removeChild(script);
+    };
+  }, []);
 
   return (
     <div className="app-container">
-      {/* 🚀 Left Side: Add Place Button */}
+      {/* 🚀 Left Side: Add Destination Button */}
       <div className="upload-container">
         <button
           className="add-place-button"
@@ -43,12 +61,9 @@ const App = () => {
         <MapComponent username={currentUser} />
       )}
 
-      {/* Show UploadForm when button is clicked
-          and pass the onUploadSuccess callback */}
+      {/* Show UploadForm when button is clicked and pass the onUploadSuccess callback */}
       {showForm && (
-        <UploadForm
-          onUploadSuccess={handleUploadSuccess}
-        />
+        <UploadForm onUploadSuccess={handleUploadSuccess} />
       )}
     </div>
   );
