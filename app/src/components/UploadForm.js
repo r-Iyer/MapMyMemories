@@ -36,7 +36,7 @@ const UploadForm = ({ onUploadSuccess }) => {
     data.append("longitude", longitude);
     data.append("image", formData.image);
 
-    console.log("🚀 Data being sent:", Object.fromEntries(data.entries()));
+    console.log("Data being sent:", Object.fromEntries(data.entries()));
 
     const API_URL = process.env.NODE_ENV === 'production'
       ? 'https://visited-places-backend.vercel.app/api/upload'
@@ -52,7 +52,7 @@ const UploadForm = ({ onUploadSuccess }) => {
       console.log("🚀 Server Response:", result);
 
       if (response.ok) {
-        setMessage('Upload successful!');
+        setMessage('New Destination Unlocked!');
         setImageUrl(result.githubImageUrl || result.localImagePath);
 
         // After successful upload, call the callback passed from App
@@ -62,17 +62,17 @@ const UploadForm = ({ onUploadSuccess }) => {
           }, 1500);
         }
       } else {
-        setMessage(result.error || 'Upload failed');
+        setMessage(result.error || 'Please try again!');
       }
     } catch (error) {
-      console.error("❌ Upload Error:", error);
+      console.error("Upload Error:", error);
       setMessage('Error uploading file');
     }
   };
 
   return (
     <div className="upload-form-container">
-      <h2 className="upload-form-title">Upload a New Place</h2>
+      <h2 className="upload-form-title">Upload a New Destination / New User</h2>
       <form onSubmit={handleSubmit} className="upload-form">
         <label className="upload-form-label">User:</label>
         <input 

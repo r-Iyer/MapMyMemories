@@ -28,7 +28,7 @@ const App = () => {
           className="add-place-button"
           onClick={() => setShowForm(!showForm)}
         >
-          {showForm ? 'Close' : 'Add Place'}
+          {showForm ? 'Close' : 'Add Destination'}
         </button>
       </div>
 
