@@ -1,6 +1,5 @@
 {
   "scripts": {
-    "postinstall": "cd ../frontend && npm install && npm run build",
     "start": "node index.js"
   }
 }

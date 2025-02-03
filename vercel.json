@@ -20,5 +20,5 @@
       "dest": "/frontend/build/$1"
     }
   ],
-  "buildCommand": "cd frontend && npm install && npm run build && cd ../backend && npm install"
+  "buildCommand": "cd frontend && npm install && npm run build"
 }
