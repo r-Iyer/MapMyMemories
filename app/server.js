@@ -161,4 +161,6 @@ if (process.env.NODE_ENV !== 'production') {
   app.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`));
 }
 
-module.exports = app;
+// Export the app as a serverless handler for Vercel
+const serverless = require('serverless-http');
+module.exports = serverless(app);
