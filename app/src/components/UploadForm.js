@@ -78,6 +78,7 @@ const UploadForm = ({ onUploadSuccess }) => {
         <input 
           type="text" 
           name="username" 
+          placeholder="Enigma"
           value={formData.username} 
           onChange={handleChange} 
           required 
@@ -88,6 +89,7 @@ const UploadForm = ({ onUploadSuccess }) => {
         <input 
           type="text" 
           name="place" 
+          placeholder="Chennai"
           value={formData.place} 
           onChange={handleChange} 
           required 
@@ -98,6 +100,7 @@ const UploadForm = ({ onUploadSuccess }) => {
         <input 
           type="text" 
           name="state" 
+          placeholder="Tamil Nadu"
           value={formData.state} 
           onChange={handleChange} 
           className="upload-form-input"
@@ -107,6 +110,7 @@ const UploadForm = ({ onUploadSuccess }) => {
         <input 
           type="text" 
           name="country" 
+          placeholder="India"
           value={formData.country} 
           onChange={handleChange} 
           className="upload-form-input"
