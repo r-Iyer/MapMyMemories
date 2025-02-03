@@ -1,13 +1,13 @@
-// upLoadForm.js
+// src/components/UploadForm.js
 import React, { useState } from 'react';
 
 const UploadForm = () => {
   const [formData, setFormData] = useState({
-    username: 'Rohit', // Default Username
-    place: 'Bhopal', // Default Place
-    state: 'Madhya Pradesh', // Default State
-    country: 'India', // Default Country
-    latlong: '23.24034058346992, 77.42509258962176', // Default Latitude & Longitude
+    username: 'Rohit',
+    place: 'Bhopal',
+    state: 'Madhya Pradesh',
+    country: 'India',
+    latlong: '23.24034058346992, 77.42509258962176',
     image: null,
   });
   const [message, setMessage] = useState('');
@@ -24,8 +24,6 @@ const UploadForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const data = new FormData();
-
-    // Append only the fields needed by the server
     data.append('username', formData.username);
     data.append('place', formData.place);
     data.append('state', formData.state);
@@ -35,10 +33,10 @@ const UploadForm = () => {
 
     console.log("🚀 Data being sent:", Object.fromEntries(data.entries()));
 
-    // Use '/api/upload' in production and 'http://localhost:5000/upload' locally
+    // Use '/api/upload' in production; for local development use the local URL.
     const API_URL = process.env.NODE_ENV === 'production'
       ? '/api/upload'
-      : 'http://localhost:5000/upload';
+      : 'http://localhost:5000/api/upload';
 
     try {
       const response = await fetch(API_URL, {

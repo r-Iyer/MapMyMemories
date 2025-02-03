@@ -1,4 +1,4 @@
-// /api/index.js
+// api/upload.js
 require('dotenv').config();
 const express = require('express');
 const multer = require('multer');
@@ -18,14 +18,14 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 const PORT = process.env.PORT || 5000;
-// Use multer’s memory storage (no temporary disk folder)
+// Use multer’s memory storage (so no temporary folder is needed)
 const upload = multer({ storage: multer.memoryStorage() });
 
 const GITHUB_REPO = process.env.GITHUB_REPO || "r-Iyer/Visited-Places";
 const GITHUB_BRANCH = process.env.GITHUB_BRANCH || "main";
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 
-// Use a writable temporary folder in production; otherwise use the local folder
+// Use a writable temporary folder in production; otherwise use a local folder for dev
 const BASE_DIR = process.env.NODE_ENV === 'production'
   ? path.join(os.tmpdir(), 'app', 'public')
   : path.join(process.cwd(), 'app', 'public');
@@ -63,10 +63,11 @@ async function uploadToGitHub(filePath, content, commitMessage) {
 
 /**
  * API Endpoint for uploading data.
- * The route is defined as `/upload`—when deployed via Vercel (inside `/api`),
- * a request to `/api/upload` will have the `/api` prefix stripped.
+ *
+ * Since this file is deployed as /api/upload, define the POST route on "/"
+ * so that a POST request to /api/upload is handled here.
  */
-app.post('/upload', upload.single('image'), async (req, res) => {
+app.post('/', upload.single('image'), async (req, res) => {
   try {
     console.log("🔹 Received Request Body:", req.body);
     const { username, place, state, country, latlong } = req.body;
@@ -166,10 +167,9 @@ app.post('/upload', upload.single('image'), async (req, res) => {
   }
 });
 
-// Start the Express server locally if not in production
+// For local development, start the server if not in production
 if (process.env.NODE_ENV !== 'production') {
   app.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`));
 }
 
-// Export the app as a serverless function for Vercel
 module.exports = serverless(app);
