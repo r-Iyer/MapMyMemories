@@ -3,11 +3,11 @@ import '../styles/uploadForm.css'; // Make sure to import the CSS file
 
 const UploadForm = ({ onUploadSuccess }) => {
   const [formData, setFormData] = useState({
-    username: 'Rohit',
-    place: 'Bhopal',
-    state: 'Madhya Pradesh',
-    country: 'India',
-    latlong: '23.24034058346992, 77.42509258962176',
+    username: '',
+    place: '',
+    state: '',
+    country: '',
+    latlong: '',
     image: null,
   });
   const [message, setMessage] = useState('');
@@ -74,7 +74,7 @@ const UploadForm = ({ onUploadSuccess }) => {
     <div className="upload-form-container">
       <h2 className="upload-form-title">Upload a New Place</h2>
       <form onSubmit={handleSubmit} className="upload-form">
-        <label className="upload-form-label">Username:</label>
+        <label className="upload-form-label">User:</label>
         <input 
           type="text" 
           name="username" 
