@@ -6,6 +6,7 @@ const axios = require('axios');
 const Papa = require('papaparse');
 const fs = require('fs');
 const path = require('path');
+const serverless = require('serverless-http');
 
 const app = express();
 app.use(cors());
@@ -20,7 +21,7 @@ const GITHUB_REPO = process.env.GITHUB_REPO || "r-Iyer/Visited-Places";
 const GITHUB_BRANCH = process.env.GITHUB_BRANCH || "main";
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 
-// Set the absolute path to app/public/ (this ensures files go to ...\app\public\ not ...\app\src\public\)
+// Set the absolute path to app/public/ (this ensures files go to ...\app\public\)
 const BASE_DIR = path.join(process.cwd(), 'app', 'public');
 
 /** 
@@ -51,15 +52,15 @@ async function uploadToGitHub(filePath, content, commitMessage) {
 }
 
 /** 
- * API Endpoint for uploading data:
- * - Saves the uploaded image locally under app/public/<username>/images/
- * - Updates places.csv in app/public/<username>/ with the new record (without extra blank lines)
- * - Uploads both the image and places.csv to GitHub
+ * API Endpoint for uploading data.
+ * 
+ * IMPORTANT: Notice that we have changed the route from /api/upload to /upload.
+ * This is because our vercel.json will route /api/* to server.js and will strip the /api/ prefix.
+ * Thus, a POST request to /api/upload on Vercel will reach our Express app as /upload.
  */
-app.post('/api/upload', upload.single('image'), async (req, res) => {
+app.post('/upload', upload.single('image'), async (req, res) => {
   try {
     console.log("🔹 Received Request Body:", req.body);
-
     const { username, place, state, country, latlong } = req.body;
     const file = req.file;
     if (!username || !file || !latlong.includes(',')) {
@@ -69,31 +70,24 @@ app.post('/api/upload', upload.single('image'), async (req, res) => {
     if (isNaN(latitude) || isNaN(longitude)) {
       return res.status(400).json({ error: 'Latitude or Longitude is not valid!' });
     }
-
-    // Define paths under app/public/
+    // Define correct paths under app/public/
     const localUserDir = path.join(BASE_DIR, username);
     const localImagesDir = path.join(localUserDir, 'images');
     const localCsvPath = path.join(localUserDir, 'places.csv');
-
     // Ensure local directories exist
     if (!fs.existsSync(localUserDir)) fs.mkdirSync(localUserDir, { recursive: true });
     if (!fs.existsSync(localImagesDir)) fs.mkdirSync(localImagesDir, { recursive: true });
-
     // Prepare image name and paths
     const extension = path.extname(file.originalname);
     const newFileName = `${place.replace(/\s+/g, '_')}${extension}`;
     const localImagePath = path.join(localImagesDir, newFileName);
-    // This is the path used in the GitHub repository
     const githubImagePath = `app/public/${username}/images/${newFileName}`;
-
     // Save image locally
     fs.writeFileSync(localImagePath, file.buffer);
     console.log("✅ File saved locally:", localImagePath);
-
     // Upload image to GitHub
     const fileData = file.buffer.toString('base64');
     await uploadToGitHub(githubImagePath, fileData, `Added image for ${place}`);
-
     // Read and update CSV data (places.csv)
     let csvData = [];
     try {
@@ -108,7 +102,6 @@ app.post('/api/upload', upload.single('image'), async (req, res) => {
     } catch (error) {
       console.log("ℹ️ CSV file not found, creating a new one.");
     }
-
     const newRow = {
       username,
       place,
@@ -118,7 +111,6 @@ app.post('/api/upload', upload.single('image'), async (req, res) => {
       longitude,
       picture: `/images/${newFileName}`
     };
-
     // Prevent duplicate entries
     const isDuplicate = csvData.some(row =>
       row.place === newRow.place &&
@@ -132,18 +124,15 @@ app.post('/api/upload', upload.single('image'), async (req, res) => {
     } else {
       console.log("⚠️ Duplicate entry detected, skipping CSV update.");
     }
-
     // Remove empty rows
     csvData = csvData.filter(row => Object.values(row).some(value => value !== ''));
-
-    // Convert CSV data to string without extra blank lines
-    let csvString = Papa.unparse(csvData).trimEnd(); // using trimEnd() removes trailing whitespace
-    fs.writeFileSync(localCsvPath, csvString); // Write exactly the CSV string
+    // Convert CSV data to string and remove trailing newlines using trimEnd()
+    let csvString = Papa.unparse(csvData).trimEnd();
+    // Ensure we do not add an extra blank line by not appending additional newline characters
+    fs.writeFileSync(localCsvPath, csvString);
     console.log("✅ CSV updated locally:", localCsvPath);
-
     const csvBase64 = Buffer.from(csvString).toString('base64');
     await uploadToGitHub(`app/public/${username}/places.csv`, csvBase64, `Updated places.csv for ${username}`);
-
     res.status(200).json({
       message: 'Upload successful!',
       localImagePath: localImagePath,
@@ -156,11 +145,10 @@ app.post('/api/upload', upload.single('image'), async (req, res) => {
   }
 });
 
-// Start the Express server locally (Vercel handles this in production)
+// Start the Express server locally (Vercel will use the exported handler)
 if (process.env.NODE_ENV !== 'production') {
   app.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`));
 }
 
-// Export the app as a serverless handler for Vercel
-const serverless = require('serverless-http');
-module.exports = serverless(app);
+// Export the app as a serverless function for Vercel
+module.exports = require('serverless-http')(app);
