@@ -19,6 +19,9 @@ const GITHUB_REPO = process.env.GITHUB_REPO || "r-Iyer/Visited-Places";
 const GITHUB_BRANCH = process.env.GITHUB_BRANCH || "main";
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 
+// ✅ Get Absolute Path to `app/public/`
+const BASE_DIR = path.join(__dirname, '..', 'app', 'public');
+
 /** ✅ Function to Upload Files to GitHub */
 async function uploadToGitHub(filePath, content, commitMessage) {
     const GITHUB_API_URL = `https://api.github.com/repos/${GITHUB_REPO}/contents/${filePath}`;
@@ -65,8 +68,8 @@ app.post('/api/upload', upload.single('image'), async (req, res) => {
             return res.status(400).json({ error: 'Latitude or Longitude is not valid!' });
         }
 
-        // ✅ Define local paths
-        const localUserDir = path.join(__dirname, `app/public/${username}`);
+        // ✅ Define Correct Paths Under `app/public/`
+        const localUserDir = path.join(BASE_DIR, username);
         const localImagesDir = path.join(localUserDir, 'images');
         const localCsvPath = path.join(localUserDir, 'places.csv');
 
