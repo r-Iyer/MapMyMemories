@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import './UploadForm.css'; // Make sure to import the CSS file
 
 const UploadForm = ({ onUploadSuccess }) => {
   const [formData, setFormData] = useState({
@@ -54,12 +55,11 @@ const UploadForm = ({ onUploadSuccess }) => {
         setMessage('Upload successful!');
         setImageUrl(result.githubImageUrl || result.localImagePath);
 
-        // 🔴 After successful upload, call the callback passed down from App
-        // This will hide the form and show the map in App.js
+        // After successful upload, call the callback passed from App
         if (onUploadSuccess) {
           setTimeout(() => {
             onUploadSuccess();
-          }, 1500); // Optional delay to let user see success message
+          }, 1500);
         }
       } else {
         setMessage(result.error || 'Upload failed');
@@ -71,44 +71,48 @@ const UploadForm = ({ onUploadSuccess }) => {
   };
 
   return (
-    <div>
-      <h2>Upload a New Place</h2>
-      <form onSubmit={handleSubmit}>
-        <label>Username:</label>
+    <div className="upload-form-container">
+      <h2 className="upload-form-title">Upload a New Place</h2>
+      <form onSubmit={handleSubmit} className="upload-form">
+        <label className="upload-form-label">Username:</label>
         <input 
           type="text" 
           name="username" 
           value={formData.username} 
           onChange={handleChange} 
           required 
-        /><br />
+          className="upload-form-input"
+        />
 
-        <label>Place:</label>
+        <label className="upload-form-label">Place:</label>
         <input 
           type="text" 
           name="place" 
           value={formData.place} 
           onChange={handleChange} 
           required 
-        /><br />
+          className="upload-form-input"
+        />
 
-        <label>State:</label>
+        <label className="upload-form-label">State:</label>
         <input 
           type="text" 
           name="state" 
           value={formData.state} 
           onChange={handleChange} 
-        /><br />
+          className="upload-form-input"
+        />
 
-        <label>Country:</label>
+        <label className="upload-form-label">Country:</label>
         <input 
           type="text" 
           name="country" 
           value={formData.country} 
           onChange={handleChange} 
-        /><br />
+          className="upload-form-input"
+        />
 
-        <label>Latitude, Longitude:</label>
+        <label className="upload-form-label">Latitude, Longitude:</label>
         <input 
           type="text" 
           name="latlong" 
@@ -116,25 +120,27 @@ const UploadForm = ({ onUploadSuccess }) => {
           onChange={handleChange} 
           placeholder="23.233, 77.321"
           required 
-        /><br />
+          className="upload-form-input"
+        />
 
-        <label>Image:</label>
+        <label className="upload-form-label">Image:</label>
         <input 
           type="file" 
           name="image" 
           accept="image/*" 
           onChange={handleChange} 
           required 
-        /><br />
+          className="upload-form-input"
+        />
 
-        <button type="submit">Upload</button>
+        <button type="submit" className="upload-form-button">Upload</button>
       </form>
 
-      {message && <p>{message}</p>}
+      {message && <p className="upload-form-message">{message}</p>}
       {imageUrl && (
-        <div>
-          <p>Uploaded Image:</p>
-          <img src={imageUrl} alt="Uploaded" width="300" />
+        <div className="upload-form-image-container">
+          <p className="upload-form-image-label">Uploaded Image:</p>
+          <img src={imageUrl} alt="Uploaded" className="upload-form-image" />
         </div>
       )}
     </div>
