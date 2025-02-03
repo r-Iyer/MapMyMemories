@@ -19,8 +19,8 @@ const GITHUB_REPO = process.env.GITHUB_REPO || "r-Iyer/Visited-Places";
 const GITHUB_BRANCH = process.env.GITHUB_BRANCH || "main";
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 
-// ✅ Get Absolute Path to `app/public/`
-const BASE_DIR = path.resolve(__dirname, 'public');
+// ✅ Set Correct Path for `app/public/`
+const BASE_DIR = path.join(__dirname, '..', 'public');
 
 /** ✅ Function to Upload Files to GitHub */
 async function uploadToGitHub(filePath, content, commitMessage) {
@@ -95,7 +95,7 @@ app.post('/api/upload', upload.single('image'), async (req, res) => {
         // ✅ Fetch existing CSV if available (GitHub or Local)
         try {
             if (fs.existsSync(localCsvPath)) {
-                const fileContent = fs.readFileSync(localCsvPath, 'utf8').trim(); // 🔥 Remove extra spaces
+                const fileContent = fs.readFileSync(localCsvPath, 'utf8').trim();
                 csvData = Papa.parse(fileContent, { header: true }).data;
             } else {
                 const response = await axios.get(`https://raw.githubusercontent.com/${GITHUB_REPO}/${GITHUB_BRANCH}/app/public/${username}/places.csv`);
@@ -114,7 +114,24 @@ app.post('/api/upload', upload.single('image'), async (req, res) => {
             longitude,
             picture: `/images/${newFileName}`
         };
-        csvData.push(newRow);
+
+        // ✅ Prevent Duplicate Entries in `places.csv`
+        const isDuplicate = csvData.some(row =>
+            row.place === newRow.place &&
+            row.state === newRow.state &&
+            row.country === newRow.country &&
+            row.latitude === newRow.latitude &&
+            row.longitude === newRow.longitude
+        );
+
+        if (!isDuplicate) {
+            csvData.push(newRow);
+        } else {
+            console.log("⚠️ Duplicate entry detected, skipping CSV update.");
+        }
+
+        // ✅ Remove Empty Rows from `places.csv`
+        csvData = csvData.filter(row => Object.values(row).some(value => value !== ''));
 
         // ✅ Convert CSV back to string & fix extra new line issue
         let csvString = Papa.unparse(csvData).trim(); // 🔥 Remove unnecessary spaces
