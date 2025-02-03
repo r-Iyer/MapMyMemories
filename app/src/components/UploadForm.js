@@ -40,7 +40,7 @@ const UploadForm = () => {
 
         // Choose the API URL based on the environment:
         const API_URL = process.env.NODE_ENV === 'production'
-            ? '/api/upload'
+            ? 'https://visited-places-backend.vercel.app/api/upload'
             : 'http://localhost:5000/api/upload';
 
         try {
