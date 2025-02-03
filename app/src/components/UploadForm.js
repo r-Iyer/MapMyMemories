@@ -23,9 +23,10 @@ const UploadForm = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         const data = new FormData();
-    
+
+        // Split the latlong string into latitude and longitude
         const [latitude, longitude] = formData.latlong.split(',').map(coord => coord.trim());
-    
+
         data.append("username", formData.username);
         data.append("place", formData.place);
         data.append("state", formData.state);
@@ -34,39 +35,73 @@ const UploadForm = () => {
         data.append("latitude", latitude);
         data.append("longitude", longitude);
         data.append("image", formData.image);
-    
-        console.log("🚀 Data being sent:", Object.fromEntries(data.entries())); // ✅ Debug log
-    
+
+        console.log("🚀 Data being sent:", Object.fromEntries(data.entries())); // Debug log
+
+        // Choose the API URL based on the environment:
+        const API_URL = process.env.NODE_ENV === 'production'
+            ? '/api/upload'
+            : 'http://localhost:5000/api/upload';
+
         try {
-            const response = await fetch('http://localhost:5000/api/upload', {
+            const response = await fetch(API_URL, {
                 method: 'POST',
                 body: data,
             });
-    
+
             const result = await response.json();
-            console.log("🚀 Server Response:", result); // ✅ Log the response
-    
+            console.log("🚀 Server Response:", result); // Log the response
+
+            // Optionally, set message or imageUrl from result if needed
+            if (response.ok) {
+                setMessage('Upload successful!');
+                setImageUrl(result.githubImageUrl || result.localImagePath);
+            } else {
+                setMessage(result.error || 'Upload failed');
+            }
         } catch (error) {
             console.error("❌ Upload Error:", error);
+            setMessage('Error uploading file');
         }
     };
-    
 
     return (
         <div>
             <h2>Upload a New Place</h2>
             <form onSubmit={handleSubmit}>
                 <label>Username:</label>
-                <input type="text" name="username" value={formData.username} onChange={handleChange} required /><br />
+                <input 
+                    type="text" 
+                    name="username" 
+                    value={formData.username} 
+                    onChange={handleChange} 
+                    required 
+                /><br />
 
                 <label>Place:</label>
-                <input type="text" name="place" value={formData.place} onChange={handleChange} required /><br />
+                <input 
+                    type="text" 
+                    name="place" 
+                    value={formData.place} 
+                    onChange={handleChange} 
+                    required 
+                /><br />
 
                 <label>State:</label>
-                <input type="text" name="state" value={formData.state} onChange={handleChange} /><br />
+                <input 
+                    type="text" 
+                    name="state" 
+                    value={formData.state} 
+                    onChange={handleChange} 
+                /><br />
 
                 <label>Country:</label>
-                <input type="text" name="country" value={formData.country} onChange={handleChange} /><br />
+                <input 
+                    type="text" 
+                    name="country" 
+                    value={formData.country} 
+                    onChange={handleChange} 
+                /><br />
 
                 <label>Latitude, Longitude:</label>
                 <input 
@@ -79,7 +114,13 @@ const UploadForm = () => {
                 /><br />
 
                 <label>Image:</label>
-                <input type="file" name="image" accept="image/*" onChange={handleChange} required /><br />
+                <input 
+                    type="file" 
+                    name="image" 
+                    accept="image/*" 
+                    onChange={handleChange} 
+                    required 
+                /><br />
 
                 <button type="submit">Upload</button>
             </form>
