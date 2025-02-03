@@ -1,11 +1,11 @@
 require('dotenv').config();
-const fs = require('fs');
-const path = require('path');
 const express = require('express');
 const multer = require('multer');
 const cors = require('cors');
 const axios = require('axios');
 const Papa = require('papaparse');
+const fs = require('fs');
+const path = require('path');
 
 const app = express();
 app.use(cors());
@@ -13,7 +13,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 const PORT = process.env.PORT || 5000;
-const upload = multer({ storage: multer.memoryStorage() }); // ✅ No local file storage
+const upload = multer({ storage: multer.memoryStorage() }); // ✅ No temp folder needed
 
 const GITHUB_REPO = process.env.GITHUB_REPO || "r-Iyer/Visited-Places";
 const GITHUB_BRANCH = process.env.GITHUB_BRANCH || "main";
@@ -30,7 +30,7 @@ async function uploadToGitHub(filePath, content, commitMessage) {
         });
         sha = response.data.sha; // Get SHA for updating the file
     } catch (err) {
-        console.log("ℹ️ File does not exist, creating a new one.");
+        console.log(`ℹ️ File ${filePath} does not exist on GitHub, creating a new one.`);
     }
 
     try {
@@ -65,24 +65,41 @@ app.post('/api/upload', upload.single('image'), async (req, res) => {
             return res.status(400).json({ error: 'Latitude or Longitude is not valid!' });
         }
 
-        // ✅ Prepare image name for GitHub
+        // ✅ Define local paths
+        const localUserDir = path.join(__dirname, `app/public/${username}`);
+        const localImagesDir = path.join(localUserDir, 'images');
+        const localCsvPath = path.join(localUserDir, 'places.csv');
+
+        // ✅ Ensure local directories exist
+        if (!fs.existsSync(localUserDir)) fs.mkdirSync(localUserDir, { recursive: true });
+        if (!fs.existsSync(localImagesDir)) fs.mkdirSync(localImagesDir, { recursive: true });
+
+        // ✅ Prepare image name and paths
         const extension = path.extname(file.originalname);
         const newFileName = `${place.replace(/\s+/g, '_')}${extension}`;
-        const githubImagePath = `public/${username}/images/${newFileName}`;
+        const localImagePath = path.join(localImagesDir, newFileName);
+        const githubImagePath = `app/public/${username}/images/${newFileName}`;
 
-        // ✅ Convert file buffer to Base64 for GitHub API
-        const fileData = file.buffer.toString('base64');
+        // ✅ Save Image Locally
+        fs.writeFileSync(localImagePath, file.buffer);
+        console.log("✅ File saved locally:", localImagePath);
 
         // ✅ Upload Image to GitHub
+        const fileData = file.buffer.toString('base64');
         await uploadToGitHub(githubImagePath, fileData, `Added image for ${place}`);
 
-        // ✅ Append CSV Data
-        const csvFilePath = `public/${username}/places.csv`;
+        // ✅ Append CSV Data (Both Locally & GitHub)
         let csvData = [];
 
+        // ✅ Fetch existing CSV if available (GitHub or Local)
         try {
-            const response = await axios.get(`https://raw.githubusercontent.com/${GITHUB_REPO}/${GITHUB_BRANCH}/${csvFilePath}`);
-            csvData = Papa.parse(response.data, { header: true }).data;
+            if (fs.existsSync(localCsvPath)) {
+                const fileContent = fs.readFileSync(localCsvPath, 'utf8').trim();
+                csvData = Papa.parse(fileContent, { header: true }).data;
+            } else {
+                const response = await axios.get(`https://raw.githubusercontent.com/${GITHUB_REPO}/${GITHUB_BRANCH}/app/public/${username}/places.csv`);
+                csvData = Papa.parse(response.data, { header: true }).data;
+            }
         } catch (error) {
             console.log("ℹ️ CSV file not found, creating a new one.");
         }
@@ -98,16 +115,19 @@ app.post('/api/upload', upload.single('image'), async (req, res) => {
         };
         csvData.push(newRow);
 
-        let csvString = Papa.unparse(csvData).trim();
-        const csvBase64 = Buffer.from(csvString).toString('base64');
+        // ✅ Convert CSV back to string & fix trailing newline issue
+        let csvString = Papa.unparse(csvData).replace(/\n+$/, ''); // ✅ Remove extra blank lines
+        fs.writeFileSync(localCsvPath, csvString); // ✅ Save locally without extra line
+        console.log("✅ CSV updated locally:", localCsvPath);
 
-        await uploadToGitHub(csvFilePath, csvBase64, `Updated places.csv for ${username}`);
+        const csvBase64 = Buffer.from(csvString).toString('base64');
+        await uploadToGitHub(`app/public/${username}/places.csv`, csvBase64, `Updated places.csv for ${username}`);
 
         res.status(200).json({
             message: 'Upload successful!',
-            imagePath: `https://raw.githubusercontent.com/${GITHUB_REPO}/${GITHUB_BRANCH}/${githubImagePath}`,
-            csvPath: `https://raw.githubusercontent.com/${GITHUB_REPO}/${GITHUB_BRANCH}/${csvFilePath}`,
-            picture: `/images/${newFileName}`
+            localImagePath: localImagePath,
+            githubImageUrl: `https://raw.githubusercontent.com/${GITHUB_REPO}/${GITHUB_BRANCH}/${githubImagePath}`,
+            csvPath: `https://raw.githubusercontent.com/${GITHUB_REPO}/${GITHUB_BRANCH}/app/public/${username}/places.csv`
         });
 
     } catch (error) {
