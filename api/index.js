@@ -1,3 +1,4 @@
+// /api/index.js
 require('dotenv').config();
 const express = require('express');
 const multer = require('multer');
@@ -6,27 +7,36 @@ const axios = require('axios');
 const Papa = require('papaparse');
 const fs = require('fs');
 const path = require('path');
+const os = require('os');
 const serverless = require('serverless-http');
 
 const app = express();
+
+// Middleware
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 const PORT = process.env.PORT || 5000;
-// Use memory storage so no temporary "uploads/" folder is created
+// Use multer’s memory storage (no temporary disk folder)
 const upload = multer({ storage: multer.memoryStorage() });
 
 const GITHUB_REPO = process.env.GITHUB_REPO || "r-Iyer/Visited-Places";
 const GITHUB_BRANCH = process.env.GITHUB_BRANCH || "main";
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 
-// Set the absolute path to app/public/ (this ensures files go to ...\app\public\)
-const BASE_DIR = path.join(process.cwd(), 'app', 'public');
+// Use a writable temporary folder in production; otherwise use the local folder
+const BASE_DIR = process.env.NODE_ENV === 'production'
+  ? path.join(os.tmpdir(), 'app', 'public')
+  : path.join(process.cwd(), 'app', 'public');
 
-/** 
- * Function to upload a file (image or CSV) to GitHub.
- * It checks whether the file already exists (to update it) or not.
+// Ensure BASE_DIR exists
+if (!fs.existsSync(BASE_DIR)) {
+  fs.mkdirSync(BASE_DIR, { recursive: true });
+}
+
+/**
+ * Uploads a file (image or CSV) to GitHub.
  */
 async function uploadToGitHub(filePath, content, commitMessage) {
   const GITHUB_API_URL = `https://api.github.com/repos/${GITHUB_REPO}/contents/${filePath}`;
@@ -51,43 +61,47 @@ async function uploadToGitHub(filePath, content, commitMessage) {
   }
 }
 
-/** 
+/**
  * API Endpoint for uploading data.
- * 
- * IMPORTANT: Notice that we have changed the route from /api/upload to /upload.
- * This is because our vercel.json will route /api/* to server.js and will strip the /api/ prefix.
- * Thus, a POST request to /api/upload on Vercel will reach our Express app as /upload.
+ * The route is defined as `/upload`—when deployed via Vercel (inside `/api`),
+ * a request to `/api/upload` will have the `/api` prefix stripped.
  */
 app.post('/upload', upload.single('image'), async (req, res) => {
   try {
     console.log("🔹 Received Request Body:", req.body);
     const { username, place, state, country, latlong } = req.body;
     const file = req.file;
-    if (!username || !file || !latlong.includes(',')) {
+    if (!username || !file || !latlong || !latlong.includes(',')) {
       return res.status(400).json({ error: 'Invalid request data' });
     }
     const [latitude, longitude] = latlong.split(',').map(coord => coord.trim());
     if (isNaN(latitude) || isNaN(longitude)) {
       return res.status(400).json({ error: 'Latitude or Longitude is not valid!' });
     }
-    // Define correct paths under app/public/
+
+    // Define directories under BASE_DIR
     const localUserDir = path.join(BASE_DIR, username);
     const localImagesDir = path.join(localUserDir, 'images');
     const localCsvPath = path.join(localUserDir, 'places.csv');
-    // Ensure local directories exist
+
+    // Ensure directories exist
     if (!fs.existsSync(localUserDir)) fs.mkdirSync(localUserDir, { recursive: true });
     if (!fs.existsSync(localImagesDir)) fs.mkdirSync(localImagesDir, { recursive: true });
-    // Prepare image name and paths
+
+    // Prepare image file name and paths
     const extension = path.extname(file.originalname);
     const newFileName = `${place.replace(/\s+/g, '_')}${extension}`;
     const localImagePath = path.join(localImagesDir, newFileName);
     const githubImagePath = `app/public/${username}/images/${newFileName}`;
+
     // Save image locally
     fs.writeFileSync(localImagePath, file.buffer);
     console.log("✅ File saved locally:", localImagePath);
+
     // Upload image to GitHub
     const fileData = file.buffer.toString('base64');
     await uploadToGitHub(githubImagePath, fileData, `Added image for ${place}`);
+
     // Read and update CSV data (places.csv)
     let csvData = [];
     try {
@@ -95,13 +109,15 @@ app.post('/upload', upload.single('image'), async (req, res) => {
         const fileContent = fs.readFileSync(localCsvPath, 'utf8').trim();
         csvData = Papa.parse(fileContent, { header: true }).data;
       } else {
-        // Try to fetch from GitHub if local file doesn't exist
+        // Try fetching from GitHub if local CSV isn’t found
         const response = await axios.get(`https://raw.githubusercontent.com/${GITHUB_REPO}/${GITHUB_BRANCH}/app/public/${username}/places.csv`);
         csvData = Papa.parse(response.data, { header: true }).data;
       }
     } catch (error) {
       console.log("ℹ️ CSV file not found, creating a new one.");
     }
+
+    // Prepare new CSV row
     const newRow = {
       username,
       place,
@@ -111,7 +127,8 @@ app.post('/upload', upload.single('image'), async (req, res) => {
       longitude,
       picture: `/images/${newFileName}`
     };
-    // Prevent duplicate entries
+
+    // Prevent duplicates
     const isDuplicate = csvData.some(row =>
       row.place === newRow.place &&
       row.state === newRow.state &&
@@ -124,18 +141,22 @@ app.post('/upload', upload.single('image'), async (req, res) => {
     } else {
       console.log("⚠️ Duplicate entry detected, skipping CSV update.");
     }
-    // Remove empty rows
+
+    // Remove any empty rows and convert CSV data to a string
     csvData = csvData.filter(row => Object.values(row).some(value => value !== ''));
-    // Convert CSV data to string and remove trailing newlines using trimEnd()
-    let csvString = Papa.unparse(csvData).trimEnd();
-    // Ensure we do not add an extra blank line by not appending additional newline characters
+    const csvString = Papa.unparse(csvData).trimEnd();
+
+    // Save updated CSV locally
     fs.writeFileSync(localCsvPath, csvString);
     console.log("✅ CSV updated locally:", localCsvPath);
+
+    // Upload CSV to GitHub
     const csvBase64 = Buffer.from(csvString).toString('base64');
     await uploadToGitHub(`app/public/${username}/places.csv`, csvBase64, `Updated places.csv for ${username}`);
+
     res.status(200).json({
       message: 'Upload successful!',
-      localImagePath: localImagePath,
+      localImagePath,
       githubImageUrl: `https://raw.githubusercontent.com/${GITHUB_REPO}/${GITHUB_BRANCH}/${githubImagePath}`,
       csvPath: `https://raw.githubusercontent.com/${GITHUB_REPO}/${GITHUB_BRANCH}/app/public/${username}/places.csv`
     });
@@ -145,10 +166,10 @@ app.post('/upload', upload.single('image'), async (req, res) => {
   }
 });
 
-// Start the Express server locally (Vercel will use the exported handler)
+// Start the Express server locally if not in production
 if (process.env.NODE_ENV !== 'production') {
   app.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`));
 }
 
 // Export the app as a serverless function for Vercel
-module.exports = require('serverless-http')(app);
+module.exports = serverless(app);
