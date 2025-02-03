@@ -4,6 +4,7 @@
   "description": "Backend server for file uploads and GitHub integration",
   "main": "index.js",
   "scripts": {
+    "postinstall": "cd ../frontend && npm install && npm run build",
     "start": "node index.js"
   },
   "dependencies": {
