@@ -8,4 +8,4 @@ To drop a user (and all his associated places):
 
 curl -X DELETE "http://localhost:4000/api/user/delete/Rahul"
 
-curl -X DELETE "https://visited-places-backend.vercel.app/api/user/delete/Rahul"
+curl -X DELETE "https://visited-places-backend.vercel.app/api/user/delete/Rohit"
