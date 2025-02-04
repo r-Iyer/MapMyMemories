@@ -83,3 +83,62 @@
     font-size: 14px;
     font-weight: bold;
 }
+
+.dropdown-input-container {
+    display: flex;
+    align-items: center;
+    position: relative;
+    width: 100%;
+}
+
+.username-input {
+    flex-grow: 1;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px 0 0 5px;
+    font-size: 16px;
+    width: 100%;
+}
+
+.dropdown-button {
+    padding: 10px 15px;
+    border: 1px solid #ccc;
+    background-color: #444; /* Dark background */
+    color: #fff; /* White text */
+    cursor: pointer;
+    border-radius: 0 5px 5px 0;
+    position: relative;
+    z-index: 10;
+}
+
+.dropdown-button:hover {
+    background-color: #555;
+}
+
+/* ✅ Fixed alignment & dark mode */
+.dropdown-list {
+    position: absolute;
+    top: 40px;
+    left: 0;
+    right: 0;
+    background: #333; /* Dark background */
+    border: 1px solid #666;
+    border-radius: 5px;
+    margin-top: 2px;
+    max-height: 150px;
+    overflow-y: auto;
+    list-style-type: none;
+    padding: 0;
+    z-index: 1000;
+}
+
+.dropdown-item {
+    padding: 10px;
+    cursor: pointer;
+    text-align: left;
+    color: #fff; /* White font */
+}
+
+.dropdown-item:hover {
+    background-color: #444;
+}
