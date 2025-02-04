@@ -15,6 +15,7 @@
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3); /* Shadow effect */
     border: 5px solid #d4a373; /* Goldish border for vintage look */
     padding: 15px; /* Padding inside the popup */
+    transition: transform 0.3s ease;
 }
 
 .leaflet-popup-content {
