@@ -18,6 +18,7 @@ const UploadForm = ({ onUploadSuccess }) => {
   const [message, setMessage] = useState('');
   const [imageUrl, setImageUrl] = useState('');
   const [isPasswordVerified, setIsPasswordVerified] = useState(localStorage.getItem('isVerified') === 'true');
+  const [isUploading, setIsUploading] = useState(false);
 
   const placeInputRef = useRef(null);
   const autocompleteRef = useRef(null);
@@ -39,16 +40,26 @@ const UploadForm = ({ onUploadSuccess }) => {
               country = component.long_name;
             }
           });
+
+          // If geometry is available, extract lat and lng
+          let latlong = formData.latlong; // fallback if geometry is missing
+          if (place.geometry && place.geometry.location) {
+            const lat = place.geometry.location.lat();
+            const lng = place.geometry.location.lng();
+            latlong = `${lat}, ${lng}`;
+          }
+
           setFormData(prevData => ({
             ...prevData,
             place: place.name || prevData.place,
             state,
             country,
+            latlong, // autofill latlong if available
           }));
         }
       });
     }
-  }, []);
+  }, [formData.latlong]);
 
   // Handle input changes (including file inputs)
   const handleChange = (e) => {
@@ -88,12 +99,32 @@ const UploadForm = ({ onUploadSuccess }) => {
     }
   };
 
-  // Updated form submission: first upload file directly to Cloudinary, then send metadata to your backend
+  // Updated form submission:
+  // First check if the user exists by querying /api/user/list.
+  // If the user exists, continue with uploading the image and metadata.
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!isPasswordVerified) {
       setMessage('❌ Please verify your password before uploading.');
+      return;
+    }
+
+    // Format the username (trim and capitalize first letter)
+    const formattedUsername = formData.username.trim();
+    const formattedUsernameCap = formattedUsername.charAt(0).toUpperCase() + formattedUsername.slice(1).toLowerCase();
+
+    // Check if the user exists by calling the /api/user/list endpoint
+    try {
+      const listResponse = await fetch(`${BACKEND_URL}/api/user/list`);
+      const listResult = await listResponse.json();
+      if (!listResult.users || !listResult.users.includes(formattedUsernameCap)) {
+        setMessage('❌ User does not exist. Please register first.');
+        return;
+      }
+    } catch (error) {
+      console.error('❌ Error fetching user list:', error);
+      setMessage('❌ Error checking user existence');
       return;
     }
 
@@ -104,6 +135,7 @@ const UploadForm = ({ onUploadSuccess }) => {
       return;
     }
 
+    setIsUploading(true);
     // Create FormData for Cloudinary upload
     const cloudinaryUrl = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/upload`;
     const cloudinaryData = new FormData();
@@ -120,6 +152,7 @@ const UploadForm = ({ onUploadSuccess }) => {
 
       if (!cloudinaryResult.secure_url) {
         setMessage('❌ Cloudinary upload failed.');
+        setIsUploading(false);
         return;
       }
 
@@ -157,6 +190,8 @@ const UploadForm = ({ onUploadSuccess }) => {
     } catch (error) {
       console.error('❌ Upload Error:', error);
       setMessage('❌ Error uploading file');
+    } finally {
+      setIsUploading(false);
     }
   };
 
@@ -269,8 +304,12 @@ const UploadForm = ({ onUploadSuccess }) => {
               className="upload-form-input"
             />
 
-            <button type="submit" className="upload-form-button">
-              Upload
+            <button
+              type="submit"
+              className="upload-form-button"
+              disabled={isUploading}
+            >
+              {isUploading ? 'Uploading...' : 'Upload'}
             </button>
           </>
         )}
