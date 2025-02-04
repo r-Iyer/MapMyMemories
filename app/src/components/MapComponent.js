@@ -1,35 +1,31 @@
 import React, { useState, useEffect } from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
-import Papa from 'papaparse';
 import 'leaflet/dist/leaflet.css';
 import '../styles/mapStyles.css';
+
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || '';
 
 const MapComponent = ({ username }) => {
   const [places, setPlaces] = useState([]);
 
   useEffect(() => {
-    fetch(`/${username}/places.csv`)
+    // ✅ Fetch from API dynamically (Works both locally & on Vercel)
+    fetch(`${BACKEND_URL}/api/fetch/user/${username}`)
       .then(response => {
         if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
+          throw new Error(`HTTP error! Status: ${response.status}`);
         }
-        return response.text();
+        return response.json();
       })
-      .then(csvText => {
-        Papa.parse(csvText, {
-          header: true,
-          skipEmptyLines: true,
-          delimiter: ",",
-          complete: (results) => {
-            setPlaces(results.data);
-          },
-          error: (error) => {
-            console.error('Error parsing CSV:', error);
-          }
-        });
+      .then(data => {
+        if (data.places) {
+          setPlaces(data.places);
+        } else {
+          console.error("No places found for this user.");
+        }
       })
-      .catch(error => console.error('Error loading CSV file:', error));
+      .catch(error => console.error("Error fetching user places:", error));
   }, [username]);
 
   const customIcon = new L.Icon({
@@ -56,13 +52,13 @@ const MapComponent = ({ username }) => {
               <div className="popup-title">Place: {place.place}</div>
               <div className="popup-body">State: {place.state}</div>
               <div className="popup-body">Country: {place.country}</div>
-              {place.picture && (
+              {place.imageUrl && (
                 <img
-                  src={`/${username}/${place.picture.trim()}`}
+                  src={place.imageUrl} // ✅ Use Cloudinary Image URL
                   alt={place.place}
                   className="popup-image"
                   style={{ width: '100%', cursor: 'pointer' }}
-                  onDoubleClick={() => window.open(`/${username}/${place.picture.trim()}`, '_blank')}
+                  onDoubleClick={() => window.open(place.imageUrl, '_blank')}
                 />
               )}
             </div>

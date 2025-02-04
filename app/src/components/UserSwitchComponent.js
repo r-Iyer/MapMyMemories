@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import '../styles/userSwitchStyles.css';
 
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || '';
+
 const UserSwitchComponent = ({ currentUsername, onSwitchUser }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [newUsername, setNewUsername] = useState('');
@@ -8,24 +10,32 @@ const UserSwitchComponent = ({ currentUsername, onSwitchUser }) => {
 
     const handleUserChange = () => {
         setError(''); // Reset error message
-
         const trimmedUsername = newUsername.trim();
+
         if (!trimmedUsername) {
             setError('Username cannot be empty.');
             return;
         }
 
-        fetch(`/${trimmedUsername}/places.csv`)
+        // ✅ Fetch from API dynamically (Works both locally & on Vercel)
+        fetch(`${BACKEND_URL}/api/fetch/user/${trimmedUsername}`)
             .then(response => {
                 if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
+                    throw new Error('User not found.');
                 }
+                return response.json();
+            })
+            .then(data => {
+                if (!data.places || data.places.length === 0) {
+                    throw new Error('User has no saved places.');
+                }
+
                 onSwitchUser(trimmedUsername);
                 setNewUsername('');
                 setIsOpen(false);
             })
-            .catch(() => {
-                setError('User not found or error loading data.');
+            .catch(err => {
+                setError(err.message || 'Error switching user.');
             });
     };
 

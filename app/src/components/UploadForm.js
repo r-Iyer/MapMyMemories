@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import '../styles/uploadForm.css'; // Ensure the CSS file is correctly imported
 
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || '';
+
 const UploadForm = ({ onUploadSuccess }) => {
   const [formData, setFormData] = useState({
     username: '',
@@ -15,20 +17,15 @@ const UploadForm = ({ onUploadSuccess }) => {
 
   // Reference for the Place input
   const placeInputRef = useRef(null);
-  // Reference for the Autocomplete object
   const autocompleteRef = useRef(null);
 
-  // Initialize the Google Places Autocomplete on mount
+  // ✅ Initialize Google Places Autocomplete
   useEffect(() => {
     if (window.google && placeInputRef.current) {
-      autocompleteRef.current = new window.google.maps.places.Autocomplete(placeInputRef.current, {
-        // You can adjust the options here; for full global suggestions, no restrictions:
-        // types: ['geocode'] // Uncomment if you want to restrict to addresses
-      });
+      autocompleteRef.current = new window.google.maps.places.Autocomplete(placeInputRef.current);
       autocompleteRef.current.addListener('place_changed', () => {
         const place = autocompleteRef.current.getPlace();
         if (place && place.address_components) {
-          // Extract the state and country from the address components
           let state = '';
           let country = '';
           place.address_components.forEach(component => {
@@ -39,9 +36,9 @@ const UploadForm = ({ onUploadSuccess }) => {
               country = component.long_name;
             }
           });
+
           setFormData(prevData => ({
             ...prevData,
-            // Update the place with the formatted name if available, otherwise the raw input
             place: place.name || prevData.place,
             state,
             country,
@@ -62,36 +59,32 @@ const UploadForm = ({ onUploadSuccess }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const data = new FormData();
+    console.log("🔹 Data being sent:", Object.fromEntries(data.entries()));
 
-    // Split latlong into latitude and longitude
+    // ✅ Split latlong into latitude and longitude
     const [latitude, longitude] = formData.latlong.split(',').map(coord => coord.trim());
     data.append("username", formData.username);
     data.append("place", formData.place);
     data.append("state", formData.state);
     data.append("country", formData.country);
-    data.append("latlong", formData.latlong); 
     data.append("latitude", latitude);
     data.append("longitude", longitude);
     data.append("image", formData.image);
 
-    console.log("Data being sent:", Object.fromEntries(data.entries()));
-
-    const API_URL = process.env.NODE_ENV === 'production'
-      ? 'https://visited-places-backend.vercel.app/api/upload'
-      : 'http://localhost:5000/api/upload';
+    console.log("🔹 Data being sent:", Object.fromEntries(data.entries()));
 
     try {
-      const response = await fetch(API_URL, {
+      const response = await fetch(`${BACKEND_URL}/api/upload`, {
         method: 'POST',
         body: data,
       });
 
       const result = await response.json();
-      console.log("Server Response:", result);
+      console.log("✅ Server Response:", result);
 
       if (response.ok) {
         setMessage('New Destination Unlocked!');
-        setImageUrl(result.githubImageUrl || result.localImagePath);
+        setImageUrl(result.imageUrl); // ✅ Use Cloudinary Image URL
 
         if (onUploadSuccess) {
           setTimeout(() => {
@@ -102,20 +95,20 @@ const UploadForm = ({ onUploadSuccess }) => {
         setMessage(result.error || 'Please try again!');
       }
     } catch (error) {
-      console.error("Upload Error:", error);
+      console.error("❌ Upload Error:", error);
       setMessage('Error uploading file');
     }
   };
 
   return (
     <div className="upload-form-container">
-      <h2 className="upload-form-title">Upload a New Destination / New User</h2>
+      <h2 className="upload-form-title">Upload a New Destination</h2>
       <form onSubmit={handleSubmit} className="upload-form">
         <label className="upload-form-label">User:</label>
         <input 
           type="text" 
           name="username" 
-          placeholder="Enigma"
+          placeholder="Enter your username"
           value={formData.username} 
           onChange={handleChange} 
           required 
@@ -138,7 +131,7 @@ const UploadForm = ({ onUploadSuccess }) => {
         <input 
           type="text" 
           name="state" 
-          placeholder="State will auto-update"
+          placeholder="State (auto-filled)"
           value={formData.state} 
           onChange={handleChange} 
           className="upload-form-input"
@@ -148,7 +141,7 @@ const UploadForm = ({ onUploadSuccess }) => {
         <input 
           type="text" 
           name="country" 
-          placeholder="Country will auto-update"
+          placeholder="Country (auto-filled)"
           value={formData.country} 
           onChange={handleChange} 
           className="upload-form-input"
@@ -160,7 +153,7 @@ const UploadForm = ({ onUploadSuccess }) => {
           name="latlong" 
           value={formData.latlong} 
           onChange={handleChange} 
-          placeholder="23.233, 77.321"
+          placeholder="e.g. 23.233, 77.321"
           required 
           className="upload-form-input"
         />
