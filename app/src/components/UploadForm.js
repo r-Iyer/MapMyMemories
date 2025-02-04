@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import '../styles/uploadForm.css';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || '';
+const CLOUD_NAME = process.env.REACT_APP_CLOUDINARY_CLOUD_NAME; // e.g. "mycloudname"
+const UPLOAD_PRESET = process.env.REACT_APP_CLOUDINARY_UPLOAD_PRESET; // e.g. "unsigned_preset"
 
 const UploadForm = ({ onUploadSuccess }) => {
   const [formData, setFormData] = useState({
@@ -13,7 +15,6 @@ const UploadForm = ({ onUploadSuccess }) => {
     latlong: '',
     image: null,
   });
-
   const [message, setMessage] = useState('');
   const [imageUrl, setImageUrl] = useState('');
   const [isPasswordVerified, setIsPasswordVerified] = useState(localStorage.getItem('isVerified') === 'true');
@@ -21,7 +22,7 @@ const UploadForm = ({ onUploadSuccess }) => {
   const placeInputRef = useRef(null);
   const autocompleteRef = useRef(null);
 
-  // ✅ Initialize Google Places Autocomplete when component mounts
+  // Initialize Google Places Autocomplete when component mounts
   useEffect(() => {
     if (window.google && placeInputRef.current) {
       autocompleteRef.current = new window.google.maps.places.Autocomplete(placeInputRef.current);
@@ -38,7 +39,6 @@ const UploadForm = ({ onUploadSuccess }) => {
               country = component.long_name;
             }
           });
-
           setFormData(prevData => ({
             ...prevData,
             place: place.name || prevData.place,
@@ -50,16 +50,16 @@ const UploadForm = ({ onUploadSuccess }) => {
     }
   }, []);
 
-  // ✅ Handle input changes (including file inputs)
+  // Handle input changes (including file inputs)
   const handleChange = (e) => {
     const { name, value, files } = e.target;
-    setFormData((prevData) => ({
+    setFormData(prevData => ({
       ...prevData,
       [name]: files ? files[0] : value,
     }));
   };
 
-  // ✅ Verify password before allowing upload
+  // Verify password before allowing upload
   const verifyPassword = async () => {
     setMessage('');
     try {
@@ -71,7 +71,6 @@ const UploadForm = ({ onUploadSuccess }) => {
           password: formData.password,
         }),
       });
-
       const result = await response.json();
       if (response.ok) {
         setIsPasswordVerified(true);
@@ -89,7 +88,7 @@ const UploadForm = ({ onUploadSuccess }) => {
     }
   };
 
-  // ✅ Handle form submission
+  // Updated form submission: first upload file directly to Cloudinary, then send metadata to your backend
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -98,37 +97,62 @@ const UploadForm = ({ onUploadSuccess }) => {
       return;
     }
 
-    const data = new FormData();
-
-    // ✅ Split latlong into latitude and longitude
+    // Validate and split latlong
     const [latitude, longitude] = formData.latlong.split(',').map(coord => coord.trim());
-    data.append('username', formData.username);
-    data.append('place', formData.place);
-    data.append('state', formData.state);
-    data.append('country', formData.country);
-    data.append('latitude', latitude);
-    data.append('longitude', longitude);
-    data.append('image', formData.image);
+    if (!latitude || !longitude) {
+      setMessage('❌ Invalid latitude/longitude');
+      return;
+    }
+
+    // Create FormData for Cloudinary upload
+    const cloudinaryUrl = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/upload`;
+    const cloudinaryData = new FormData();
+    cloudinaryData.append('file', formData.image);
+    cloudinaryData.append('upload_preset', UPLOAD_PRESET);
 
     try {
-      const response = await fetch(`${BACKEND_URL}/api/upload`, {
+      // Upload file directly to Cloudinary
+      const cloudinaryResponse = await fetch(cloudinaryUrl, {
         method: 'POST',
-        body: data,
+        body: cloudinaryData,
       });
+      const cloudinaryResult = await cloudinaryResponse.json();
 
-      const result = await response.json();
+      if (!cloudinaryResult.secure_url) {
+        setMessage('❌ Cloudinary upload failed.');
+        return;
+      }
 
-      if (response.ok) {
+      console.log("✅ Image Uploaded Successfully to Cloudinary:", cloudinaryResult.secure_url);
+
+      // Now prepare metadata (including Cloudinary URL) to send to your backend
+      const metadataData = new FormData();
+      metadataData.append('username', formData.username);
+      metadataData.append('place', formData.place);
+      metadataData.append('state', formData.state);
+      metadataData.append('country', formData.country);
+      metadataData.append('latitude', latitude);
+      metadataData.append('longitude', longitude);
+      // Instead of sending the file, send the Cloudinary URL:
+      metadataData.append('imageUrl', cloudinaryResult.secure_url);
+
+      // Call a new endpoint to save the metadata in MongoDB
+      const metadataResponse = await fetch(`${BACKEND_URL}/api/upload/metadata`, {
+        method: 'POST',
+        body: metadataData,
+      });
+      const metadataResult = await metadataResponse.json();
+
+      if (metadataResponse.ok) {
         setMessage('✅ New Destination Unlocked!');
-        setImageUrl(result.imageUrl);
-
+        setImageUrl(metadataResult.imageUrl);
         if (onUploadSuccess) {
           setTimeout(() => {
             onUploadSuccess();
           }, 1500);
         }
       } else {
-        setMessage(result.error || '❌ Please try again!');
+        setMessage(metadataResult.error || '❌ Please try again!');
       }
     } catch (error) {
       console.error('❌ Upload Error:', error);
@@ -136,7 +160,7 @@ const UploadForm = ({ onUploadSuccess }) => {
     }
   };
 
-  // ✅ Handler to change user: clears stored credentials and resets form data
+  // Handler to change user: clears stored credentials and resets form data
   const handleChangeUser = () => {
     localStorage.removeItem('username');
     localStorage.removeItem('password');
