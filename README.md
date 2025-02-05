@@ -1,10 +1,10 @@
 # Visited Destinations
 
-	#Application to map the destinations visited by people
+	## Application to map your travels, visualize memories, and share your journey.
 
 System Design:
 
-![System Design]("./Visited Destinations Design.png")
+![System Design](./Visited%20Destinations%20Design.png)
 
 Localhost URL: http://localhost:4000
 Vercel URL: https://visited-places-backend.vercel.app
