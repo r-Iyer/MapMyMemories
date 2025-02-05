@@ -6,6 +6,7 @@
     z-index: 1000;
 }
 
+/* Modified to allow dropdown overflow */
 .user-switch-container {
     position: absolute;
     top: 10px;
@@ -19,7 +20,7 @@
     color: #fff;
     max-width: 200px;
     transition: max-height 0.3s ease;
-    overflow: hidden;
+    overflow: visible; /* Changed from hidden to visible */
 }
 
 /* 🚀 Button Styling for Consistency */
@@ -116,7 +117,7 @@
     background-color: #555;
 }
 
-/* ✅ Fixed alignment & dark mode */
+/* ✅ Modified Dropdown List: scrollable and allowed to overflow */
 .dropdown-list {
     position: absolute;
     top: 40px;
@@ -126,11 +127,36 @@
     border: 1px solid #666;
     border-radius: 5px;
     margin-top: 2px;
-    max-height: 150px;
-    overflow-y: auto;
+    max-height: 150px;  /* Limit height */
+    overflow-y: auto;   /* Enable vertical scroll */
     list-style-type: none;
     padding: 0;
-    z-index: 1000;
+    z-index: 1100; /* Increased z-index so it appears above the container */
+}
+
+/* Fancy Scrollbar Styling for WebKit Browsers */
+.dropdown-list::-webkit-scrollbar {
+    width: 8px;
+}
+
+.dropdown-list::-webkit-scrollbar-track {
+    background: #222;
+    border-radius: 4px;
+}
+
+.dropdown-list::-webkit-scrollbar-thumb {
+    background: #666;
+    border-radius: 4px;
+}
+
+.dropdown-list::-webkit-scrollbar-thumb:hover {
+    background: #888;
+}
+
+/* Firefox scrollbar styling */
+.dropdown-list {
+    scrollbar-width: thin;           /* "auto" or "thin" */
+    scrollbar-color: #666 #222;       /* thumb and track color */
 }
 
 .dropdown-item {
