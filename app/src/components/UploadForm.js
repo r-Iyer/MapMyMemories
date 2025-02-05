@@ -64,11 +64,29 @@ const UploadForm = ({ onUploadSuccess }) => {
   // Handle input changes (including file inputs)
   const handleChange = (e) => {
     const { name, value, files } = e.target;
+  
+    // If the user selects a new image, clear any previous message
+    if (name === "image") {
+      setMessage('');
+    }
+  
+    // Check file size (Max 10MB)
+    if (files && files[0]) {
+      if (files[0].size > 10 * 1024 * 1024) { // 10MB limit
+        setMessage('❌ File size must be ≤ 10MB');
+  
+        // Clear the file input field
+        e.target.value = null;
+        return;
+      }
+    }
+  
     setFormData(prevData => ({
       ...prevData,
       [name]: files ? files[0] : value,
     }));
-  };
+  };  
+  
 
   // Verify password before allowing upload
   const verifyPassword = async () => {
@@ -314,6 +332,7 @@ const UploadForm = ({ onUploadSuccess }) => {
           </>
         )}
 
+      {isPasswordVerified && formData.username && formData.password && (
         <button
           type="button"
           className="toggle-change-user-button"
@@ -321,6 +340,8 @@ const UploadForm = ({ onUploadSuccess }) => {
         >
           Change User
         </button>
+      )}
+
       </form>
 
       {message && <p className="upload-form-message">{message}</p>}
