@@ -1,7 +1,5 @@
 # Visited Destinations
 
-## Application to map your travels, visualize memories, and share your journey.
-
 ## System Design:
 
 ![System Design](./Visited%20Destinations%20Design.png)
