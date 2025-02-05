@@ -14,15 +14,18 @@
     border-radius: 12px; /* Rounded corners */
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3); /* Shadow effect */
     border: 5px solid #d4a373; /* Goldish border for vintage look */
-    padding: 15px; /* Padding inside the popup */
+    padding: 0px; /* Padding inside the popup */
     transition: transform 0.3s ease;
 }
 
 .leaflet-popup-content {
-    color: #fff !important; /* White text color */
+    color: #ffffff !important; /* White text color */
     font-family: 'Dancing Script', cursive; /* Fancy font */
 }
 
+.double-tap-message {
+    font-family: 'cursive'; /* Fancy font */
+}
 .popup-content {
     overflow: auto;
     display: flex;

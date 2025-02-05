@@ -47,22 +47,33 @@ const MapComponent = ({ username }) => {
           position={[parseFloat(place.latitude), parseFloat(place.longitude)]}
           icon={customIcon}
         >
-          <Popup>
-            <div className="popup-content">
-              <div className="popup-title">Place: {place.place}</div>
-              <div className="popup-body">State: {place.state}</div>
-              <div className="popup-body">Country: {place.country}</div>
-              {place.imageUrl && (
-                <img
-                  src={place.imageUrl} // ✅ Use Cloudinary Image URL
-                  alt={place.place}
-                  className="popup-image"
-                  style={{ width: '100%', cursor: 'pointer' }}
-                  onDoubleClick={() => window.open(place.imageUrl, '_blank')}
-                />
-              )}
-            </div>
-          </Popup>
+<Popup>
+  <div className="popup-content">
+    <div className="popup-title">Place: {place.place}</div>
+    <div className="popup-body">State: {place.state}</div>
+    <div className="popup-body">Country: {place.country}</div>
+    {place.imageUrl && (
+      <>
+        <img
+          src={place.imageUrl}
+          alt={place.place}
+          className="popup-image"
+          style={{ width: '100%', cursor: 'pointer' }}
+          onDoubleClick={() => window.open(place.imageUrl, '_blank')}
+        />
+        {/* Centered message below the image */}
+        <div 
+          className="double-tap-message" 
+          style={{ textAlign: 'center', fontSize: '0.7em', marginTop: '4px' }}
+        >
+          Double-tap/click to zoom
+        </div>
+      </>
+    )}
+  </div>
+</Popup>
+
+
         </Marker>
       ))}
     </MapContainer>
