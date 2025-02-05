@@ -7,22 +7,28 @@ import './styles/App.css';
 import './styles/userSwitchStyles.css';
 
 const App = () => {
-  const [currentUser, setCurrentUser] = useState('Rohit');
-  const [showForm, setShowForm] = useState(false);
-  const [reloadMap, setReloadMap] = useState(false); // ✅ Added state to refresh map on upload
+  // 1. Initialize currentUser from localStorage or default to "Rohit"
+  const [currentUser, setCurrentUser] = useState(() => {
+    const storedUser = localStorage.getItem('lastUser');
+    return storedUser || 'Rohit';
+  });
 
+  const [showForm, setShowForm] = useState(false);
+  const [reloadMap, setReloadMap] = useState(false);
+
+  // 2. When switching user, also store in localStorage
   const handleSwitchUser = (username) => {
     setCurrentUser(username);
-    setReloadMap(prev => !prev); // ✅ Trigger map reload when switching users
+    localStorage.setItem('lastUser', username);  // <-- store in localStorage here
+    setReloadMap(prev => !prev);
   };
 
-  // ✅ Ensure MapComponent refreshes when a new destination is added
   const handleUploadSuccess = () => {
-    setShowForm(false); // ✅ Hide the form after a successful upload
-    setReloadMap(prev => !prev); // ✅ Trigger MapComponent to reload new places
+    setShowForm(false);
+    setReloadMap(prev => !prev);
   };
 
-  // ✅ Inject Google Places API only once
+  // Inject Google Places API only once
   useEffect(() => {
     if (!window.google) {
       const apiKey = process.env.REACT_APP_GOOGLE_API_KEY;
@@ -40,7 +46,7 @@ const App = () => {
 
   return (
     <div className="app-container">
-      {/* 🚀 Left Side: Add Destination Button */}
+      {/* Left Side: Add Destination Button */}
       <div className="upload-container">
         <button
           className="add-place-button"
@@ -50,18 +56,17 @@ const App = () => {
         </button>
       </div>
 
-      {/* 🚀 Right Side: Switch User */}
-      <UserSwitchComponent 
-        currentUsername={currentUser} 
-        onSwitchUser={handleSwitchUser} 
+      {/* Right Side: Switch User */}
+      <UserSwitchComponent
+        currentUsername={currentUser}
+        onSwitchUser={handleSwitchUser}
       />
 
-      {/* 🚀 Hide Map When Upload Form is Open */}
+      {/* Hide Map When Upload Form is Open */}
       {!showForm && currentUser && (
-        <MapComponent username={currentUser} key={reloadMap} /> // ✅ Added key prop to force re-render
+        <MapComponent username={currentUser} key={reloadMap} />
       )}
 
-      {/* Show UploadForm when button is clicked and pass the onUploadSuccess callback */}
       {showForm && (
         <UploadForm onUploadSuccess={handleUploadSuccess} />
       )}
