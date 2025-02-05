@@ -1,3 +1,7 @@
+System Design:
+
+![System Design]("./Visited Destinations Design.png")
+
 Localhost URL: http://localhost:4000
 Vercel URL: https://visited-places-backend.vercel.app
 
