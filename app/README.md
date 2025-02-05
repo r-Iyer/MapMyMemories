@@ -34,7 +34,7 @@ User APIs:
 	
 Place Metadata APIs:
 
-	## Summary of Endpoints
+## Summary of Endpoints
 
 | Endpoint                                        | Method | Description                                                                                                              |
 |-------------------------------------------------|--------|--------------------------------------------------------------------------------------------------------------------------|
@@ -43,7 +43,7 @@ Place Metadata APIs:
 | `/api/fetch/place/:username/:place`             | GET    | Fetch a single place by username and place name (exact match).                                                           |
 | `/api/fetch/all`                                | GET    | Fetch all places in the database (sorted by creation date desc). |
 
-	## Form Data Fields for `/api/upload/metadata`
+## Form Data Fields for `/api/upload/metadata`
 
 | Field       | Type   | Required | Description                                                                 |
 |-------------|--------|----------|-----------------------------------------------------------------------------|
