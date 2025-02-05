@@ -7,11 +7,11 @@ User APIs:
 
 ## Summary of Endpoints
 
-	| Endpoint                      | Method | Description                                                                    |
-	|------------------------------|--------|--------------------------------------------------------------------------------|
-	| /api/user/register           | POST   | Register a new user (username + password).                                    |
-	| /api/user/list               | GET    | Retrieve a unique, alphabetically sorted list of usernames.                   |
-	| /api/user/verify-password    | POST   | Verify a user's password (case-insensitive username).                          |
+| Endpoint                      | Method | Description                                                                    |
+|------------------------------|--------|--------------------------------------------------------------------------------|
+| /api/user/register           | POST   | Register a new user (username + password).                                    |
+| /api/user/list               | GET    | Retrieve a unique, alphabetically sorted list of usernames.                   |
+| /api/user/verify-password    | POST   | Verify a user's password (case-insensitive username).                          |
 
 
 	1. Register a User:
@@ -45,15 +45,16 @@ Place Metadata APIs:
 
 	## Form Data Fields for `/api/upload/metadata`
 
-	| Field      | Type   | Required | Description                                                                 |
-	|------------|--------|----------|-----------------------------------------------------------------------------|
-	| `username` | string | Yes      | The username who owns this place.                                           |
-	| `place`    | string | Yes      | The name/title of the place.                                               |
-	| `state`    | string | No       | State or region of the place (optional).                                   |
-	| `country`  | string | No       | Country of the place (optional).                                           |
-	| `latitude` | string | Yes      | Latitude in string form (converted to float in backend).                   |
-	| `longitude`| string | Yes      | Longitude in string form (converted to float in backend).                  |
-	| `imageUrl` | string | Yes      | The URL where the image is hosted (e.g., from Cloudinary or another CDN).  |
+| Field       | Type   | Required | Description                                                                 |
+|-------------|--------|----------|-----------------------------------------------------------------------------|
+| `username`  | string | Yes      | The username who owns this place.                                           |
+| `place`     | string | Yes      | The name/title of the place.                                               |
+| `state`     | string | No       | State or region of the place (optional).                                   |
+| `country`   | string | No       | Country of the place (optional).                                           |
+| `latitude`  | string | Yes      | Latitude in string form (converted to float in the backend).               |
+| `longitude` | string | Yes      | Longitude in string form (converted to float in the backend).              |
+| `imageUrl`  | string | Yes      | The URL where the image is hosted (e.g., from Cloudinary or another CDN).  |
+
 
 
 	1. Upload Metadata
@@ -87,9 +88,9 @@ Database connection API:
 
 ## Summary of Endpoints
 
-	| Endpoint                     | Method | Description                                                      |
-	|-----------------------------|--------|------------------------------------------------------------------|
-	| /api/cloudinary/test        | GET    | Tests Cloudinary configuration/connection via cloudinary.api.ping. |
+| Endpoint                     | Method | Description                                                      |
+|-----------------------------|--------|------------------------------------------------------------------|
+| /api/cloudinary/test        | GET    | Tests Cloudinary configuration/connection via cloudinary.api.ping. |
 
 
 	1. Test Cloudinary Configuration & Connection
