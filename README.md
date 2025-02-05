@@ -1,19 +1,19 @@
 # Visited Destinations
 
-	## Application to map your travels, visualize memories, and share your journey.
+## Application to map your travels, visualize memories, and share your journey.
 
-System Design:
+## System Design:
 
 ![System Design](./Visited%20Destinations%20Design.png)
 
-Localhost URL: http://localhost:4000
-Vercel URL: https://visited-places-backend.vercel.app
+
+## API Documentation
 
 Note: Few APIs are hidden for security reasons.
 
-User APIs:
+### User APIs:
 
-## Summary of Endpoints
+#### Summary of Endpoints
 
 | Endpoint                      | Method | Description                                                                    |
 |------------------------------|--------|--------------------------------------------------------------------------------|
@@ -40,9 +40,9 @@ User APIs:
 		 -d '{"username":"alice","password":"mypassword"}' \
 		 https://visited-places-backend.vercel.app/user/verify-password
 	
-Place Metadata APIs:
+### Place Metadata APIs:
 
-## Summary of Endpoints
+#### Summary of Endpoints
 
 | Endpoint                                        | Method | Description                                                                                                              |
 |-------------------------------------------------|--------|--------------------------------------------------------------------------------------------------------------------------|
@@ -51,7 +51,7 @@ Place Metadata APIs:
 | `/api/fetch/place/:username/:place`             | GET    | Fetch a single place by username and place name (exact match).                                                           |
 | `/api/fetch/all`                                | GET    | Fetch all places in the database (sorted by creation date desc). |
 
-## Form Data Fields for `/api/upload/metadata`
+#### Form Data Fields for `/api/upload/metadata`
 
 | Field       | Type   | Required | Description                                                                 |
 |-------------|--------|----------|-----------------------------------------------------------------------------|
@@ -92,9 +92,9 @@ Place Metadata APIs:
 		curl -X GET https://visited-places-backend.vercel.app/api/fetch/all
 
 
-Database connection API:
+###Database connection API:
 
-## Summary of Endpoints
+#### Summary of Endpoints
 
 | Endpoint                     | Method | Description                                                      |
 |-----------------------------|--------|------------------------------------------------------------------|
@@ -104,3 +104,7 @@ Database connection API:
 	1. Test Cloudinary Configuration & Connection
 
 		curl -X GET https://visited-places-backend.vercel.app/api/cloudinary/test
+
+
+Localhost URL: http://localhost:4000
+Vercel URL: https://visited-places-backend.vercel.app
