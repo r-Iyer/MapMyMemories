@@ -161,20 +161,24 @@ const UploadForm = ({ onUploadSuccess }) => {
     cloudinaryData.append('upload_preset', UPLOAD_PRESET);
 
     try {
-      // Upload file directly to Cloudinary
-      const cloudinaryResponse = await fetch(cloudinaryUrl, {
-        method: 'POST',
-        body: cloudinaryData,
-      });
-      const cloudinaryResult = await cloudinaryResponse.json();
+      let secureUrl = '';
+      if (formData.image) {
+        // Upload file directly to Cloudinary
+        const cloudinaryResponse = await fetch(cloudinaryUrl, {
+          method: 'POST',
+          body: cloudinaryData,
+        });
+        const cloudinaryResult = await cloudinaryResponse.json();
 
-      if (!cloudinaryResult.secure_url) {
-        setMessage('❌ Cloudinary upload failed.');
-        setIsUploading(false);
-        return;
+        if (!cloudinaryResult.secure_url) {
+          setMessage('❌ Cloudinary upload failed.');
+          setIsUploading(false);
+          return;
+        }
+
+        console.log("✅ Image Uploaded Successfully to Cloudinary:", cloudinaryResult.secure_url);
+        secureUrl = cloudinaryResult.secure_url;
       }
-
-      console.log("✅ Image Uploaded Successfully to Cloudinary:", cloudinaryResult.secure_url);
 
       // Now prepare metadata (including Cloudinary URL) to send to your backend
       const metadataData = new FormData();
@@ -185,7 +189,7 @@ const UploadForm = ({ onUploadSuccess }) => {
       metadataData.append('latitude', latitude);
       metadataData.append('longitude', longitude);
       // Instead of sending the file, send the Cloudinary URL:
-      metadataData.append('imageUrl', cloudinaryResult.secure_url);
+      metadataData.append('imageUrl', secureUrl);
 
       // Call a new endpoint to save the metadata in MongoDB
       const metadataResponse = await fetch(`${BACKEND_URL}/api/upload/metadata`, {
@@ -318,7 +322,6 @@ const UploadForm = ({ onUploadSuccess }) => {
               name="image"
               accept="image/*"
               onChange={handleChange}
-              required
               className="upload-form-input"
             />
 
