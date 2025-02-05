@@ -107,4 +107,5 @@ Note: Few APIs are hidden for security reasons.
 
 
 Localhost URL: http://localhost:4000
+
 Vercel URL: https://visited-places-backend.vercel.app
