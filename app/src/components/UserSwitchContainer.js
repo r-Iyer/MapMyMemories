@@ -9,7 +9,7 @@ const UserSwitchContainer = () => {
 
   const getUserFromQuery = () => {
     const params = new URLSearchParams(location.search);
-    return params.get('user') || 'rohit';
+    return params.get('user') || '';
   };
 
   const [currentUser, setCurrentUser] = useState(getUserFromQuery());

@@ -12,7 +12,7 @@ const MapComponent = () => {
   // Use useLocation to re-read query parameters when URL updates.
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
-  const username = queryParams.get('user') || 'rohit';
+  const username = queryParams.get('user') || '';
 
   const [places, setPlaces] = useState([]);
 
