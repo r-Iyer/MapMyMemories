@@ -6,7 +6,7 @@ const BACKEND_URL =
   process.env.REACT_APP_BACKEND_URL?.replace(/\/$/, '') ||
   'https://visited-places-backend.vercel.app';
 
-const UserSwitchComponent = ({ currentUsername, onSwitchUser }) => {
+const UserSwitchComponent = ({ currentUsername, onSwitchUser, collapse }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [users, setUsers] = useState([]);
   const [newUsername, setNewUsername] = useState('');
@@ -15,6 +15,13 @@ const UserSwitchComponent = ({ currentUsername, onSwitchUser }) => {
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
   const [dropdownOpen, setDropdownOpen] = useState(false);
+
+  // Collapse the dropdown when the collapse prop becomes true.
+  useEffect(() => {
+    if (collapse) {
+      setIsOpen(false);
+    }
+  }, [collapse]);
 
   // Fetch the list of users from the backend when the component mounts
   useEffect(() => {
@@ -65,7 +72,7 @@ const UserSwitchComponent = ({ currentUsername, onSwitchUser }) => {
     }
   };
 
-  // Register a new user with validation: username must start with a letter, then letters or numbers only.
+  // Register a new user (existing code)
   const handleAddUser = () => {
     setError('');
     setMessage('');
@@ -74,13 +81,6 @@ const UserSwitchComponent = ({ currentUsername, onSwitchUser }) => {
 
     if (!trimmedUsername || !trimmedPassword) {
       setError('Username and password cannot be empty.');
-      return;
-    }
-
-    // Validate that username starts with a letter, and after that only letters or numbers are allowed.
-    const usernameRegex = /^[A-Za-z][A-Za-z0-9]*$/;
-    if (!usernameRegex.test(trimmedUsername)) {
-      setError('Username must start with a letter and can contain only letters and numbers.');
       return;
     }
 
@@ -118,7 +118,7 @@ const UserSwitchComponent = ({ currentUsername, onSwitchUser }) => {
   return (
     <div className="user-switch-container">
       <button className="user-switch-button" onClick={toggleDropdown}>
-        {isAddingUser ? 'Back to Switch User' : 'Switch User / Add User'}
+        {'Switch User / Add User'}
       </button>
 
       {isOpen && (
@@ -167,9 +167,12 @@ const UserSwitchComponent = ({ currentUsername, onSwitchUser }) => {
             <button onClick={handleUserChange}>Switch</button>
           )}
 
-          <button onClick={() => setIsAddingUser((prev) => !prev)}>
-            {isAddingUser ? 'Switch User Instead' : 'Create New User'}
-          </button>
+<button 
+  className='create-new-user-button'
+  onClick={() => setIsAddingUser((prev) => !prev)}>
+  {isAddingUser ? 'Switch User Instead' : 'Create New User'}
+</button>
+
 
           {error && <div className="error-message">{error}</div>}
           {message && <div className="success-message">{message}</div>}

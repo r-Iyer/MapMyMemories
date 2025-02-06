@@ -62,8 +62,7 @@
     padding: 8px 12px;
     border-radius: 4px;
     cursor: pointer;
-    font-size: 14px;
-    font-weight: bold;
+    font-size: 1rem;
 }
 
 .user-switch-dropdown button:hover {
@@ -169,3 +168,18 @@
 .dropdown-item:hover {
     background-color: #444;
 }
+
+.user-switch-container .create-new-user-button {
+    background-color: #134915 !important;
+    color: white !important;
+    border: none !important;
+    padding: 8px 16px !important;
+    font-size: 1rem !important;
+    border-radius: 4px !important;
+    cursor: pointer !important;
+  }
+  
+  .user-switch-container .create-new-user-button:hover {
+    background-color: #45a049 !important;
+  }
+  

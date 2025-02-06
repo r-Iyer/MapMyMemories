@@ -1,22 +1,26 @@
 // src/components/UserSwitchContainer.js
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import UserSwitchComponent from './UserSwitchComponent';
 
-const UserSwitchContainer = () => {
+const UserSwitchContainer = ({ collapse }) => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const getUserFromQuery = () => {
+  const getUserFromQuery = useCallback(() => {
     const params = new URLSearchParams(location.search);
-    return params.get('user') || '';
-  };
+    return params.get('user') || 'rohit';
+  }, [location.search]);
 
   const [currentUser, setCurrentUser] = useState(getUserFromQuery());
 
   useEffect(() => {
     setCurrentUser(getUserFromQuery());
-  }, [location.search]);
+  }, [getUserFromQuery]);
+
+  useEffect(() => {
+    setCurrentUser(getUserFromQuery());
+  }, [getUserFromQuery]);
 
   const handleSwitchUser = (username) => {
     const params = new URLSearchParams(location.search);
@@ -29,6 +33,7 @@ const UserSwitchContainer = () => {
     <UserSwitchComponent
       currentUsername={currentUser}
       onSwitchUser={handleSwitchUser}
+      collapse={collapse}
     />
   );
 };

@@ -8,16 +8,23 @@ import UploadForm from './components/UploadForm';
 import './styles/App.css';
 import './styles/userSwitchStyles.css';
 
-// For debugging purposes (optional)
-console.log('UserSwitchContainer:', UserSwitchContainer);
-
 const AppContent = () => {
   const [showForm, setShowForm] = useState(false);
   const [reloadMap, setReloadMap] = useState(false);
+  const [collapseUserSwitch, setCollapseUserSwitch] = useState(false);
 
   const handleUploadSuccess = () => {
     setShowForm(false);
     setReloadMap(prev => !prev);
+  };
+
+  // When the map (or its container) is clicked, collapse the user switch.
+  const handleMapClick = () => {
+    setCollapseUserSwitch(true);
+    // Optionally reset after a short delay so the collapse prop goes back to false.
+    setTimeout(() => {
+      setCollapseUserSwitch(false);
+    }, 100);
   };
 
   // Inject Google Places API only once.
@@ -48,13 +55,14 @@ const AppContent = () => {
         </button>
       </div>
 
-      {/* Right Side: Render UserSwitchContainer only if the upload form is not open */}
-      {!showForm && <UserSwitchContainer />}
+      {/* Render UserSwitchContainer only if the upload form is not open */}
+      {!showForm && <UserSwitchContainer collapse={collapseUserSwitch} />}
 
-      {/* Hide Map When Upload Form is Open */}
+      {/* Wrap the MapComponent in a div with an onClick handler */}
       {!showForm && (
-        // MapComponent reads the username from the URL.
-        <MapComponent key={reloadMap} />
+        <div onClick={handleMapClick}>
+          <MapComponent key={reloadMap} />
+        </div>
       )}
 
       {showForm && <UploadForm onUploadSuccess={handleUploadSuccess} />}
