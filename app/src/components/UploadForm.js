@@ -1,3 +1,4 @@
+// src/components/UploadForm.js
 import React, { useState, useEffect, useRef } from 'react';
 import '../styles/uploadForm.css';
 
@@ -23,9 +24,13 @@ const UploadForm = ({ onUploadSuccess }) => {
   const placeInputRef = useRef(null);
   const autocompleteRef = useRef(null);
 
-  // Initialize Google Places Autocomplete when component mounts
-  useEffect(() => {
+  // Helper function to initialize Google Places Autocomplete
+  const initializeAutocomplete = () => {
     if (window.google && placeInputRef.current) {
+      // Clear previous listeners if any.
+      if (autocompleteRef.current) {
+        window.google.maps.event.clearInstanceListeners(autocompleteRef.current);
+      }
       autocompleteRef.current = new window.google.maps.places.Autocomplete(placeInputRef.current);
       autocompleteRef.current.addListener('place_changed', () => {
         const place = autocompleteRef.current.getPlace();
@@ -54,28 +59,50 @@ const UploadForm = ({ onUploadSuccess }) => {
             place: place.name || prevData.place,
             state,
             country,
-            latlong, // autofill latlong if available
+            latlong,
           }));
         }
       });
     }
-  }, [formData.latlong]);
+  };
+
+  // Initialize autocomplete once on mount
+  useEffect(() => {
+    initializeAutocomplete();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Additional effect: When the place field is cleared (after changing user), reinitialize autocomplete.
+  useEffect(() => {
+    if (isPasswordVerified && formData.place === '' && placeInputRef.current) {
+      initializeAutocomplete();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formData.place, isPasswordVerified]);
 
   // Handle input changes (including file inputs)
   const handleChange = (e) => {
     const { name, value, files } = e.target;
-  
+    
     // If the user selects a new image, clear any previous message
     if (name === "image") {
       setMessage('');
+    }
+    
+    // If the username is being changed while user is verified,
+    // do not allow a different username to be entered.
+    if (name === "username" && isPasswordVerified) {
+      const currentStoredUsername = localStorage.getItem('username');
+      if (value.trim().toLowerCase() !== currentStoredUsername) {
+        setMessage('❌ To change username, please click on "Change User" first.');
+        return;
+      }
     }
   
     // Check file size (Max 10MB)
     if (files && files[0]) {
       if (files[0].size > 10 * 1024 * 1024) { // 10MB limit
         setMessage('❌ File size must be ≤ 10MB');
-  
-        // Clear the file input field
         e.target.value = null;
         return;
       }
@@ -85,8 +112,7 @@ const UploadForm = ({ onUploadSuccess }) => {
       ...prevData,
       [name]: files ? files[0] : value,
     }));
-  };  
-  
+  };
 
   // Verify password before allowing upload
   const verifyPassword = async () => {
@@ -96,14 +122,15 @@ const UploadForm = ({ onUploadSuccess }) => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          username: formData.username,
+          username: formData.username.trim().toLowerCase(),
           password: formData.password,
         }),
       });
       const result = await response.json();
       if (response.ok) {
         setIsPasswordVerified(true);
-        localStorage.setItem('username', formData.username);
+        const normalizedUsername = formData.username.trim().toLowerCase();
+        localStorage.setItem('username', normalizedUsername);
         localStorage.setItem('password', formData.password);
         localStorage.setItem('isVerified', 'true');
         setMessage('✅ Password Verified! You can upload now.');
@@ -117,14 +144,28 @@ const UploadForm = ({ onUploadSuccess }) => {
     }
   };
 
-  // Updated form submission:
-  // First check if the user exists by querying /api/user/list.
-  // If the user exists, continue with uploading the image and metadata.
+  // Handle form submission and perform an extra check for authorization by calling the backend.
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!isPasswordVerified) {
-      setMessage('❌ Please verify your password before uploading.');
+    // Always verify credentials with the backend, regardless of local state.
+    try {
+      const verifyResponse = await fetch(`${BACKEND_URL}/api/user/verify-password`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          username: formData.username.trim().toLowerCase(),
+          password: formData.password,
+        }),
+      });
+      const verifyResult = await verifyResponse.json();
+      if (!verifyResponse.ok) {
+        setMessage(verifyResult.error || '❌ Not authorized. Please verify your credentials.');
+        return;
+      }
+    } catch (error) {
+      console.error('❌ Error re-verifying credentials:', error);
+      setMessage('❌ Error verifying credentials. Please try again.');
       return;
     }
 
@@ -180,7 +221,7 @@ const UploadForm = ({ onUploadSuccess }) => {
         secureUrl = cloudinaryResult.secure_url;
       }
 
-      // Now prepare metadata (including Cloudinary URL) to send to your backend
+      // Prepare metadata (including Cloudinary URL) to send to your backend
       const metadataData = new FormData();
       metadataData.append('username', formData.username);
       metadataData.append('place', formData.place);
@@ -188,10 +229,9 @@ const UploadForm = ({ onUploadSuccess }) => {
       metadataData.append('country', formData.country);
       metadataData.append('latitude', latitude);
       metadataData.append('longitude', longitude);
-      // Instead of sending the file, send the Cloudinary URL:
       metadataData.append('imageUrl', secureUrl);
 
-      // Call a new endpoint to save the metadata in MongoDB
+      // Call endpoint to save metadata in MongoDB
       const metadataResponse = await fetch(`${BACKEND_URL}/api/upload/metadata`, {
         method: 'POST',
         body: metadataData,
@@ -217,7 +257,7 @@ const UploadForm = ({ onUploadSuccess }) => {
     }
   };
 
-  // Handler to change user: clears stored credentials and resets form data
+  // Handler to change user: clears stored credentials, resets form data, and reinitializes autocomplete.
   const handleChangeUser = () => {
     localStorage.removeItem('username');
     localStorage.removeItem('password');
@@ -233,6 +273,10 @@ const UploadForm = ({ onUploadSuccess }) => {
       image: null,
     });
     setMessage('');
+    // Reinitialize autocomplete after a brief delay to ensure the DOM has updated.
+    setTimeout(() => {
+      initializeAutocomplete();
+    }, 300);
   };
 
   return (
@@ -259,6 +303,7 @@ const UploadForm = ({ onUploadSuccess }) => {
           onChange={handleChange}
           required
           className="upload-form-input"
+          disabled={isPasswordVerified}  // Password field becomes non-modifiable after verification
         />
 
         {!isPasswordVerified && (
@@ -268,6 +313,17 @@ const UploadForm = ({ onUploadSuccess }) => {
             className="verify-password-button"
           >
             Verify Password
+          </button>
+        )}
+
+        {/* If the user is verified, display the Change User button above the destination fields */}
+        {isPasswordVerified && formData.username && formData.password && (
+          <button
+            type="button"
+            className="toggle-change-user-button"
+            onClick={handleChangeUser}
+          >
+            Change User
           </button>
         )}
 
@@ -334,17 +390,6 @@ const UploadForm = ({ onUploadSuccess }) => {
             </button>
           </>
         )}
-
-      {isPasswordVerified && formData.username && formData.password && (
-        <button
-          type="button"
-          className="toggle-change-user-button"
-          onClick={handleChangeUser}
-        >
-          Change User
-        </button>
-      )}
-
       </form>
 
       {message && <p className="upload-form-message">{message}</p>}

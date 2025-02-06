@@ -1,34 +1,26 @@
+// src/App.js
 import React, { useState, useEffect } from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import MapComponent from './components/MapComponent';
-import UserSwitchComponent from './components/UserSwitchComponent';
+import UserSwitchContainer from './components/UserSwitchContainer';
 import UploadForm from './components/UploadForm';
 
 import './styles/App.css';
 import './styles/userSwitchStyles.css';
 
-const App = () => {
-  // 1. Initialize currentUser from localStorage or default to "Rohit"
-  const [currentUser, setCurrentUser] = useState(() => {
-    const storedUser = localStorage.getItem('lastUser');
-    return storedUser || 'Rohit';
-  });
+// For debugging purposes (optional)
+console.log('UserSwitchContainer:', UserSwitchContainer);
 
+const AppContent = () => {
   const [showForm, setShowForm] = useState(false);
   const [reloadMap, setReloadMap] = useState(false);
-
-  // 2. When switching user, also store in localStorage
-  const handleSwitchUser = (username) => {
-    setCurrentUser(username);
-    localStorage.setItem('lastUser', username);  // <-- store in localStorage here
-    setReloadMap(prev => !prev);
-  };
 
   const handleUploadSuccess = () => {
     setShowForm(false);
     setReloadMap(prev => !prev);
   };
 
-  // Inject Google Places API only once
+  // Inject Google Places API only once.
   useEffect(() => {
     if (!window.google) {
       const apiKey = process.env.REACT_APP_GOOGLE_API_KEY;
@@ -56,21 +48,27 @@ const App = () => {
         </button>
       </div>
 
-      {/* Right Side: Switch User */}
-      <UserSwitchComponent
-        currentUsername={currentUser}
-        onSwitchUser={handleSwitchUser}
-      />
+      {/* Right Side: Render UserSwitchContainer only if the upload form is not open */}
+      {!showForm && <UserSwitchContainer />}
 
       {/* Hide Map When Upload Form is Open */}
-      {!showForm && currentUser && (
-        <MapComponent username={currentUser} key={reloadMap} />
+      {!showForm && (
+        // MapComponent reads the username from the URL.
+        <MapComponent key={reloadMap} />
       )}
 
-      {showForm && (
-        <UploadForm onUploadSuccess={handleUploadSuccess} />
-      )}
+      {showForm && <UploadForm onUploadSuccess={handleUploadSuccess} />}
     </div>
+  );
+};
+
+const App = () => {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<AppContent />} />
+      </Routes>
+    </BrowserRouter>
   );
 };
 

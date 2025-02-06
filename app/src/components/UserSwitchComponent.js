@@ -1,7 +1,10 @@
+// src/components/UserSwitchComponent.js
 import React, { useState, useEffect } from 'react';
 import '../styles/userSwitchStyles.css';
 
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL?.replace(/\/$/, '') || "https://visited-places-backend.vercel.app";
+const BACKEND_URL =
+  process.env.REACT_APP_BACKEND_URL?.replace(/\/$/, '') ||
+  'https://visited-places-backend.vercel.app';
 
 const UserSwitchComponent = ({ currentUsername, onSwitchUser }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -13,15 +16,14 @@ const UserSwitchComponent = ({ currentUsername, onSwitchUser }) => {
   const [message, setMessage] = useState('');
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
-  // Fetch user list on mount
+  // Fetch the list of users from the backend when the component mounts
   useEffect(() => {
     fetchUsers();
   }, []);
 
-  // Retrieve list of all users from backend
   const fetchUsers = async () => {
     try {
-      console.log("📡 Fetching user list from backend...");
+      console.log('📡 Fetching user list from backend...');
       const response = await fetch(`${BACKEND_URL}/api/user/list`);
       const data = await response.json();
       if (data.users) {
@@ -30,11 +32,11 @@ const UserSwitchComponent = ({ currentUsername, onSwitchUser }) => {
         setUsers([]);
       }
     } catch (error) {
-      console.error("❌ Error fetching user list:", error);
+      console.error('❌ Error fetching user list:', error);
     }
   };
 
-  // User selects a username from the dropdown
+  // When a user is selected from the dropdown, update the input value
   const handleSelectUser = (selectedUser) => {
     setNewUsername(selectedUser);
     setDropdownOpen(false);
@@ -50,10 +52,11 @@ const UserSwitchComponent = ({ currentUsername, onSwitchUser }) => {
       return;
     }
 
-    // Check if the user exists
-    const userExists = users.some(user => user.toLowerCase() === trimmedUsername);
+    // Check if the user exists in the fetched list
+    const userExists = users.some(
+      (user) => user.toLowerCase() === trimmedUsername
+    );
     if (userExists) {
-      // Let the parent handle localStorage
       onSwitchUser(trimmedUsername);
       setNewUsername('');
       setIsOpen(false);
@@ -62,7 +65,7 @@ const UserSwitchComponent = ({ currentUsername, onSwitchUser }) => {
     }
   };
 
-  // Register a new user
+  // Register a new user with validation: username must start with a letter, then letters or numbers only.
   const handleAddUser = () => {
     setError('');
     setMessage('');
@@ -74,29 +77,36 @@ const UserSwitchComponent = ({ currentUsername, onSwitchUser }) => {
       return;
     }
 
+    // Validate that username starts with a letter, and after that only letters or numbers are allowed.
+    const usernameRegex = /^[A-Za-z][A-Za-z0-9]*$/;
+    if (!usernameRegex.test(trimmedUsername)) {
+      setError('Username must start with a letter and can contain only letters and numbers.');
+      return;
+    }
+
     fetch(`${BACKEND_URL}/api/user/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username: trimmedUsername, password: trimmedPassword })
+      body: JSON.stringify({ username: trimmedUsername, password: trimmedPassword }),
     })
-      .then(response => response.json())
-      .then(data => {
+      .then((response) => response.json())
+      .then((data) => {
         if (data.error) {
           setError(data.error);
         } else {
           setMessage('User registered successfully! You can now switch to this user.');
-          fetchUsers(); 
+          fetchUsers();
           setNewUsername('');
           setNewPassword('');
           setIsAddingUser(false);
         }
       })
-      .catch(err => setError('Error creating user.'));
+      .catch(() => setError('Error creating user.'));
   };
 
-  // Toggle the dropdown
+  // Toggle the dropdown visibility
   const toggleDropdown = () => {
-    setIsOpen(prev => {
+    setIsOpen((prev) => {
       const newState = !prev;
       if (newState) {
         setMessage('');
@@ -123,7 +133,7 @@ const UserSwitchComponent = ({ currentUsername, onSwitchUser }) => {
             />
             <button
               className="dropdown-button"
-              onClick={() => setDropdownOpen(prev => !prev)}
+              onClick={() => setDropdownOpen((prev) => !prev)}
             >
               ▼
             </button>
@@ -157,7 +167,7 @@ const UserSwitchComponent = ({ currentUsername, onSwitchUser }) => {
             <button onClick={handleUserChange}>Switch</button>
           )}
 
-          <button onClick={() => setIsAddingUser(prev => !prev)}>
+          <button onClick={() => setIsAddingUser((prev) => !prev)}>
             {isAddingUser ? 'Switch User Instead' : 'Create New User'}
           </button>
 
@@ -167,7 +177,9 @@ const UserSwitchComponent = ({ currentUsername, onSwitchUser }) => {
       )}
 
       <p className="current-username">
-        Current User: {currentUsername.charAt(0).toUpperCase() + currentUsername.slice(1).toLowerCase()}
+        Current User:{' '}
+        {currentUsername.charAt(0).toUpperCase() +
+          currentUsername.slice(1).toLowerCase()}
       </p>
     </div>
   );
